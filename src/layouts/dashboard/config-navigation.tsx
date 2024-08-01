@@ -111,6 +111,27 @@ export function useNavData() {
                             },
                         ],
                     },
+
+                    // BRAND
+                    {
+                        title: 'brand',
+                        path: paths.dashboard.brand.root,
+                        icon: ICONS.order,
+                        children: [
+                            {
+                                title: 'list',
+                                path: paths.dashboard.brand.root,
+                            },
+                            {
+                                title: 'create',
+                                path: paths.dashboard.brand.new,
+                            },
+                            {
+                                title: 'details',
+                                path: paths.dashboard.brand.demo.details,
+                            },
+                        ],
+                    },
                 ],
             },
         ],

@@ -43,6 +43,7 @@ import { createOrUpdateProduct } from 'src/api/product'
 import { ImageItem } from 'src/types/image'
 import { uploadImage } from 'src/api/image'
 
+
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -89,7 +90,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                 currentProduct?.category ||
                 PRODUCT_CATEGORY_GROUP_OPTIONS[0].classify[0],
             colors: currentProduct?.colors || [],
-            sizes: currentProduct?.sizes || [],
+            // sizes: currentProduct?.sizes || [],
             newLabel: currentProduct?.newLabel || {
                 enabled: false,
                 content: '',
@@ -163,6 +164,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             throw new Error(`thowo ${JSON.stringify(error)}`)
         }
     }, [setValue, values.images])
+
     const handleDrop = useCallback(
         (acceptedFiles: File[]) => {
             const files = values.images || []

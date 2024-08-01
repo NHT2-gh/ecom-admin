@@ -1,0 +1,1 @@
+export { default as BrandCreateView } from './brand-create-view'

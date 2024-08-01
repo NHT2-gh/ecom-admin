@@ -2,7 +2,7 @@ import { _id } from 'src/_mock/assets'
 
 // ----------------------------------------------------------------------
 
-const MOCK_ID = '30331959-3c59-4127-af0a-6b4a37e1ae75'
+const MOCK_ID = _id[1]
 
 const ROOTS = {
     AUTH: '/auth',
@@ -55,6 +55,15 @@ export const paths = {
             details: (id: string) => `${ROOTS.DASHBOARD}/order/${id}`,
             demo: {
                 details: `${ROOTS.DASHBOARD}/order/${MOCK_ID}`,
+            },
+        },
+        brand: {
+            root: `${ROOTS.DASHBOARD}/brand`,
+            list: `${ROOTS.DASHBOARD}/brand/list`,
+            new: `${ROOTS.DASHBOARD}/brand/new`,
+            details: (id: string) => `${ROOTS.DASHBOARD}/brand/${id}`,
+            demo: {
+                details: `${ROOTS.DASHBOARD}/brand/${MOCK_ID}`,
             },
         },
     },

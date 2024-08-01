@@ -25,47 +25,44 @@ import FormProvider, {
     RHFUploadAvatar,
 } from 'src/components/hook-form'
 
-import { IUserItem } from 'src/types/user'
+import { IBrandItem } from 'src/types/brand'
+import image from 'src/components/image'
+import { uploadImage } from 'src/api/image'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-    currentUser?: IUserItem
+    currentBrand?: IBrandItem
 }
 
-export default function UserNewEditForm({ currentUser }: Props) {
+export default function BrandNewEditForm({ currentBrand }: Props) {
     const router = useRouter()
 
     const { enqueueSnackbar } = useSnackbar()
 
     const NewUserSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
-        email: Yup.string()
-            .required('Email is required')
-            .email('Email must be a valid email address'),
-        phoneNumber: Yup.string().required('Phone number is required'),
-        address: Yup.string().required('Address is required'),
-        // company: Yup.string().required('Company is required'),
-        role: Yup.string().required('Role is required'),
-        avatarUrl: Yup.mixed<any>().nullable().required('Avatar is required'),
-        // not required
+        // tag_line: Yup.string().required('Address is required'),
+        // description: Yup.string().required('Address is required'),
+        image: Yup.mixed<any>().nullable().required('Avatar is required'),
+        // // not required
         status: Yup.string(),
-        isVerified: Yup.boolean(),
+        // isVerified: Yup.boolean(),
     })
 
     const defaultValues = useMemo(
         () => ({
-            name: currentUser?.name || '',
-            role: currentUser?.role || '',
-            email: currentUser?.email || '',
-            status: currentUser?.status || '',
-            address: currentUser?.address || '',
-            // company: currentUser?.company || '',
-            avatarUrl: currentUser?.avatarUrl || null,
-            phoneNumber: currentUser?.phoneNumber || '',
-            isVerified: currentUser?.isVerified || true,
+            name: currentBrand?.name || '',
+            // role: currentBrand?.role || '',
+            // email: currentBrand?.email || '',
+            status: currentBrand?.status || '',
+            // tag_line: currentBrand?.tag_line || '',
+            // description: currentBrand?.description || '',
+            image: currentBrand?.image || null,
+            // phoneNumber: currentBrand?.phoneNumber || '',
+            // isVerified: currentBrand?.isVerified || true,
         }),
-        [currentUser]
+        [currentBrand]
     )
 
     const methods = useForm({
@@ -88,13 +85,31 @@ export default function UserNewEditForm({ currentUser }: Props) {
         try {
             await new Promise((resolve) => setTimeout(resolve, 500))
             reset()
-            enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!')
-            router.push(paths.dashboard.user.list)
+            enqueueSnackbar(currentBrand ? 'Update success!' : 'Create success!')
+            router.push(paths.dashboard.brand.list)
             console.info('DATA', data)
         } catch (error) {
             console.error(error)
         }
     })
+
+    const handleUploadImage = useCallback(async () => {
+        const files = values.image || []
+        if (files.length === 0) return
+        try {
+            await Promise.all(
+                files.map(async (file, index) => {
+                    if (file.id === '') {
+                        const imageId = await uploadImage(file.data)
+                        files[index].id = imageId
+                    }
+                })
+            )
+            setValue('image', files)
+        } catch (error) {
+            throw new Error(`thowo ${JSON.stringify(error)}`)
+        }
+    }, [setValue, values.image])
 
     const handleDrop = useCallback(
         (acceptedFiles: File[]) => {
@@ -105,7 +120,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
             })
 
             if (file) {
-                setValue('avatarUrl', newFile, { shouldValidate: true })
+                setValue('image', newFile, { shouldValidate: true })
             }
         },
         [setValue]
@@ -116,7 +131,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
             <Grid container spacing={3}>
                 <Grid xs={12} md={4}>
                     <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-                        {currentUser && (
+                        {currentBrand && (
                             <Label
                                 color={
                                     (values.status === 'active' && 'success') ||
@@ -135,7 +150,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
 
                         <Box sx={{ mb: 5 }}>
                             <RHFUploadAvatar
-                                name="avatarUrl"
+                                name="image"
                                 maxSize={3145728}
                                 onDrop={handleDrop}
                                 helperText={
@@ -156,7 +171,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
                             />
                         </Box>
 
-                        {currentUser && (
+                        {/* {currentBrand && (
                             <FormControlLabel
                                 labelPlacement="start"
                                 control={
@@ -172,7 +187,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
                                                 onChange={(event) =>
                                                     field.onChange(
                                                         event.target.checked
-                                                            ? 'banned'
+                                                            ? 'inactive'
                                                             : 'active'
                                                     )
                                                 }
@@ -203,15 +218,15 @@ export default function UserNewEditForm({ currentUser }: Props) {
                                     justifyContent: 'space-between',
                                 }}
                             />
-                        )}
-                        {currentUser && (
+                        )} */}
+                        {currentBrand && (
                             <Stack
                                 justifyContent="center"
                                 alignItems="center"
                                 sx={{ mt: 3 }}
                             >
                                 <Button variant="soft" color="error">
-                                    Delete User
+                                    Delete Brand
                                 </Button>
                             </Stack>
                         )}
@@ -229,16 +244,21 @@ export default function UserNewEditForm({ currentUser }: Props) {
                                 sm: 'repeat(2, 1fr)',
                             }}
                         >
-                            <RHFTextField name="name" label="Full Name" />
-                            <RHFTextField name="email" label="Email Address" />
-                            <RHFTextField
-                                name="phoneNumber"
-                                label="Phone Number"
-                            />
-                            <RHFTextField name="address" label="Address" />
-                            <RHFTextField name="company" label="Company" />
-                            <RHFTextField name="role" label="Role" />
+                            <RHFTextField name="name" label="Brand Name" /> 
+                            {/* <RHFTextField name="tag_line" label="Tag Line" />    */}
+                            
+                            {/* <RHFTextField name="role" label="Role" /> */}
                         </Box>
+                        
+                        <Stack alignItems="flex-end" sx={{ mt: 2 }}> 
+                            {/* <RHFTextField name="description" label="Description" /> */}
+                            <RHFTextField
+                            name="description"
+                            label="Description"
+                            multiline
+                            rows={4}
+                        />
+                        </Stack>
 
                         <Stack alignItems="flex-end" sx={{ mt: 3 }}>
                             <LoadingButton
@@ -246,9 +266,10 @@ export default function UserNewEditForm({ currentUser }: Props) {
                                 variant="contained"
                                 loading={isSubmitting}
                             >
-                                {!currentUser ? 'Create User' : 'Save Changes'}
+                                {!currentBrand ? 'Create Brand' : 'Save Changes'}
                             </LoadingButton>
                         </Stack>
+
                     </Card>
                 </Grid>
             </Grid>
