@@ -120,7 +120,7 @@ export function useNavData() {
                         children: [
                             {
                                 title: 'list',
-                                path: paths.dashboard.brand.root,
+                                path: paths.dashboard.brand.list,
                             },
                             {
                                 title: 'create',

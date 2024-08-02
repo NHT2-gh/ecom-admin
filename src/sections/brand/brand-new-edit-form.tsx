@@ -72,13 +72,15 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
 
     const values = watch()
 
-    const onSubmit = handleSubmit(async ({name, image}) => {
+    const onSubmit = handleSubmit(async ({ name, image }) => {
         try {
             // const fullURL = await uploadImage(image);
-            const payload = {data: {name, image: "image.png"}}
+            const payload = { data: { name, image: 'image.png' } }
             await createBrand(payload)
             reset()
-            enqueueSnackbar(currentBrand ? 'Update success!' : 'Create success!')
+            enqueueSnackbar(
+                currentBrand ? 'Update success!' : 'Create success!'
+            )
             router.push(paths.dashboard.brand.list)
         } catch (error) {
             console.error(error)
@@ -169,9 +171,8 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
                                 sm: 'repeat(2, 1fr)',
                             }}
                         >
-                            <RHFTextField name="name" label="Brand Name" /> 
+                            <RHFTextField name="name" label="Brand Name" />
                         </Box>
-                        
 
                         <Stack alignItems="flex-end" sx={{ mt: 3 }}>
                             <LoadingButton
@@ -179,10 +180,11 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
                                 variant="contained"
                                 loading={isSubmitting}
                             >
-                                {!currentBrand ? 'Create Brand' : 'Save Changes'}
+                                {!currentBrand
+                                    ? 'Create Brand'
+                                    : 'Save Changes'}
                             </LoadingButton>
                         </Stack>
-
                     </Card>
                 </Grid>
             </Grid>

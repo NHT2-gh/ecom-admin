@@ -46,6 +46,6 @@ export const endpoints = {
     },
     brand: {
         create: `${VERSION_PREFIX}/brands`,
-        list:  `${VERSION_PREFIX}/brands`
-    }
+        list: `${VERSION_PREFIX}/brands`,
+    },
 }

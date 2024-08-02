@@ -6,10 +6,7 @@ import Stack, { StackProps } from '@mui/material/Stack'
 
 import Iconify from 'src/components/iconify'
 
-import {
-    IBrandTableFilters,
-    IBrandTableFilterValue,
-} from 'src/types/brand'
+import { IBrandTableFilters, IBrandTableFilterValue } from 'src/types/brand'
 
 // ----------------------------------------------------------------------
 

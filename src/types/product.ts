@@ -1,6 +1,5 @@
 // ----------------------------------------------------------------------
 
-
 export type IProductItem = {
     id: string
     name: string

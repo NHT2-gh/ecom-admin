@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { IBrandItem } from "src/types/brand";
+import { IBrandItem } from 'src/types/brand'
 import axios, { endpoints, fetcher } from 'src/utils/axios'
-
+import { status } from 'nprogress'
 
 interface GetBrandsProps {
     page: number
@@ -33,7 +33,7 @@ export async function createBrand({
     } catch (error) {
         throw new Error(`Exception: ${error}`)
     }
-} 
+}
 
 //---------------------------------------------------------------------
 
@@ -60,13 +60,16 @@ export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
         }
     )
 
-    const brands: IBrandItem[] = response?.data.map((dataItem: IBrandItem) => ({
-        id: dataItem.id,
-        name: dataItem.name,
-        image: dataItem.image,
-        createdAt: dataItem.createdAt,
-        updatedAt: dataItem.updatedAt
-    }))
+    const brands: IBrandItem[] = response?.data.data.map(
+        (dataItem: IBrandItem) => ({
+            id: dataItem.id,
+            name: dataItem.name,
+            image: dataItem.image,
+            createdAt: dataItem.created_at,
+            updatedAt: dataItem.updated_at,
+            status: dataItem.status,
+        })
+    )
 
     const memoizedValue = useMemo(
         () => ({

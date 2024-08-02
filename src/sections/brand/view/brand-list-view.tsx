@@ -18,8 +18,8 @@ import { RouterLink } from 'src/routes/components'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 
-import {useGetBrands } from 'src/api/brand'
-import { deleteProduct, deleteProducts} from 'src/api/product'
+import { useGetBrands } from 'src/api/brand'
+import { deleteProduct, deleteProducts } from 'src/api/product'
 
 import { PRODUCT_STOCK_OPTIONS } from 'src/_mock'
 
@@ -53,16 +53,14 @@ import BrandTableFiltersResult from '../brand-table-filters-result'
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'name', label: 'Product' },
+    { id: 'name', label: 'Brand' },
     { id: 'createdAt', label: 'Create at', width: 160 },
     { id: 'updatedAt', label: 'Update at', width: 160 },
     { id: 'status', label: 'Publish', width: 110 },
     { id: '', width: 88 },
 ]
 
-const STATUS_OPTIONS = [
-    { value: 'published', label: 'Published' },
-]
+const STATUS_OPTIONS = [{ value: 'published', label: 'Published' }]
 
 const defaultFilters: IBrandTableFilters = {
     name: '',
@@ -95,6 +93,7 @@ export default function BrandListView() {
             setTableData(brands)
         }
     }, [brands])
+    console.log(brands)
 
     const dataFiltered = applyFilter({
         inputData: tableData,
@@ -188,7 +187,7 @@ export default function BrandListView() {
                             variant="contained"
                             startIcon={<Iconify icon="mingcute:add-line" />}
                         >
-                            New Product
+                            New Brand
                         </Button>
                     }
                     sx={{ mb: { xs: 3, md: 5 } }}
@@ -252,12 +251,12 @@ export default function BrandListView() {
                                     rowCount={tableData.length}
                                     numSelected={table.selected.length}
                                     onSort={table.onSort}
-                                    onSelectAllRows={(checked) =>
-                                        table.onSelectAllRows(
-                                            checked,
-                                            tableData.map((row) => row.id)
-                                        )
-                                    }
+                                    // onSelectAllRows={(checked) =>
+                                    //     table.onSelectAllRows(
+                                    //         checked,
+                                    //         tableData.map((row) => row.id)
+                                    //     )
+                                    // }
                                 />
 
                                 <TableBody>

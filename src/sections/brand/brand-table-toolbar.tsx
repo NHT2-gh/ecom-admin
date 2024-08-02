@@ -14,10 +14,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Iconify from 'src/components/iconify'
 import CustomPopover, { usePopover } from 'src/components/custom-popover'
 
-import {
-    IBrandTableFilters,
-    IBrandTableFilterValue,
-} from 'src/types/brand'
+import { IBrandTableFilters, IBrandTableFilterValue } from 'src/types/brand'
 
 // ----------------------------------------------------------------------
 
@@ -95,39 +92,6 @@ export default function BrandTableToolbar({
                         width: { xs: 1, md: 200 },
                     }}
                 >
-                    <InputLabel>Stock</InputLabel>
-
-                    <Select
-                        multiple
-                        value={filters.stock}
-                        onChange={handleFilterStock}
-                        input={<OutlinedInput label="Stock" />}
-                        renderValue={(selected) =>
-                            selected.map((value) => value).join(', ')
-                        }
-                        sx={{ textTransform: 'capitalize' }}
-                    >
-                        {stockOptions.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                <Checkbox
-                                    disableRipple
-                                    size="small"
-                                    checked={filters.stock.includes(
-                                        option.value
-                                    )}
-                                />
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl> */}
-
-                <FormControl
-                    sx={{
-                        flexShrink: 0,
-                        width: { xs: 1, md: 200 },
-                    }}
-                >
                     <InputLabel>Publish</InputLabel>
 
                     <Select
@@ -153,7 +117,7 @@ export default function BrandTableToolbar({
                             </MenuItem>
                         ))}
                     </Select>
-                </FormControl>
+                </FormControl> */}
 
                 <Stack
                     direction="row"

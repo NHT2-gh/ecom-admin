@@ -43,7 +43,6 @@ import { createOrUpdateProduct } from 'src/api/product'
 import { ImageItem } from 'src/types/image'
 import { uploadImage } from 'src/api/image'
 
-
 // ----------------------------------------------------------------------
 
 type Props = {

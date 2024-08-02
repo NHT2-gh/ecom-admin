@@ -7,7 +7,7 @@ import { paths } from 'src/routes/paths'
 import { useSettingsContext } from 'src/components/settings'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs'
 
-import BrandNewEditForm  from '../brand-new-edit-form'
+import BrandNewEditForm from '../brand-new-edit-form'
 
 // ----------------------------------------------------------------------
 
@@ -27,8 +27,8 @@ export default function BrandCreateView() {
                         name: 'Brand',
                         href: paths.dashboard.brand.root,
                     },
-                    { 
-                        name: 'New brand', 
+                    {
+                        name: 'New brand',
                     },
                 ]}
                 sx={{
