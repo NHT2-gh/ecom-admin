@@ -42,7 +42,6 @@ export default function UserQuickEditForm({
             .email('Email must be a valid email address'),
         phoneNumber: Yup.string().required('Phone number is required'),
         address: Yup.string().required('Address is required'),
-        company: Yup.string().required('Company is required'),
         role: Yup.string().required('Role is required'),
     })
 
@@ -53,7 +52,6 @@ export default function UserQuickEditForm({
             phoneNumber: currentUser?.phoneNumber || '',
             address: currentUser?.address || '',
             status: currentUser?.status,
-            company: currentUser?.company || '',
             role: currentUser?.role || '',
         }),
         [currentUser]

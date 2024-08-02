@@ -1,4 +1,4 @@
-import { UserListView } from 'src/sections/user/view'
+import { BrandListView } from 'src/sections/brand/view'
 
 // ----------------------------------------------------------------------
 
@@ -6,6 +6,6 @@ export const metadata = {
     title: 'Dashboard: User List',
 }
 
-export default function UserListPage() {
-    return <UserListView />
+export default function BrandListPage() {
+    return <BrandListView />
 }

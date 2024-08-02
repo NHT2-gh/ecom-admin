@@ -42,6 +42,10 @@ export const endpoints = {
         search: '',
     },
     image: {
-        upload: `${VERSION_PREFIX}/images`,
+        upload: `${VERSION_PREFIX}/upload-image`,
     },
+    brand: {
+        create: `${VERSION_PREFIX}/brands`,
+        list:  `${VERSION_PREFIX}/brands`
+    }
 }

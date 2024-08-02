@@ -1,0 +1,83 @@
+import { useMemo } from 'react'
+import useSWR from 'swr'
+import { IBrandItem } from "src/types/brand";
+import axios, { endpoints, fetcher } from 'src/utils/axios'
+
+
+interface GetBrandsProps {
+    page: number
+    rowsPerPage: number
+}
+
+export async function createBrand({
+    data,
+}: {
+    data: Omit<IBrandItem, 'id' | 'status' | 'createdAt' | 'updatedAt'>
+}) {
+    const payload = JSON.stringify({
+        name: data.name,
+        image: data.image,
+    })
+    const headers = {
+        'Content-Type': 'application/json',
+        // Authorization: `Bearer ${ACCESS_TOKEN}`,
+    }
+    try {
+        const res = await axios.post(endpoints.brand.create, payload, {
+            headers,
+        })
+        if (res?.data.error) {
+            throw new Error(`Error: ${res.data.error}`)
+        }
+        return res.data
+    } catch (error) {
+        throw new Error(`Exception: ${error}`)
+    }
+} 
+
+//---------------------------------------------------------------------
+
+export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
+    const url = endpoints.brand.list
+    const {
+        data: response,
+        error,
+        isLoading,
+        isValidating,
+    } = useSWR(
+        () => [url, { params: { limit: rowsPerPage * (page + 2) } }],
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            keepPreviousData: true,
+            onErrorRetry(err, key, config, revalidate, { retryCount }) {
+                if (retryCount >= 10) return
+
+                if (err.status === 404) return
+
+                setTimeout(() => revalidate({ retryCount }), 5000)
+            },
+        }
+    )
+
+    const brands: IBrandItem[] = response?.data.map((dataItem: IBrandItem) => ({
+        id: dataItem.id,
+        name: dataItem.name,
+        image: dataItem.image,
+        createdAt: dataItem.createdAt,
+        updatedAt: dataItem.updatedAt
+    }))
+
+    const memoizedValue = useMemo(
+        () => ({
+            brands: (brands as IBrandItem[]) || [],
+            brandsLoading: isLoading,
+            brandsError: error,
+            brandsValidating: isValidating,
+            brandsEmpty: !false && !brands?.length,
+        }),
+        [response, isLoading, error, isValidating] // eslint-disable-line
+    )
+
+    return memoizedValue
+}

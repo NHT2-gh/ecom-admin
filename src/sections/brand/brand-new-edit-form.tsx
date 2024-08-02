@@ -26,8 +26,8 @@ import FormProvider, {
 } from 'src/components/hook-form'
 
 import { IBrandItem } from 'src/types/brand'
-import image from 'src/components/image'
 import { uploadImage } from 'src/api/image'
+import { createBrand } from 'src/api/brand'
 
 // ----------------------------------------------------------------------
 
@@ -42,10 +42,7 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
 
     const NewUserSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
-        // tag_line: Yup.string().required('Address is required'),
-        // description: Yup.string().required('Address is required'),
-        image: Yup.mixed<any>().nullable().required('Avatar is required'),
-        // // not required
+        image: Yup.mixed<any>().nullable().required('Image is required'),
         status: Yup.string(),
         // isVerified: Yup.boolean(),
     })
@@ -53,14 +50,8 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
     const defaultValues = useMemo(
         () => ({
             name: currentBrand?.name || '',
-            // role: currentBrand?.role || '',
-            // email: currentBrand?.email || '',
             status: currentBrand?.status || '',
-            // tag_line: currentBrand?.tag_line || '',
-            // description: currentBrand?.description || '',
             image: currentBrand?.image || null,
-            // phoneNumber: currentBrand?.phoneNumber || '',
-            // isVerified: currentBrand?.isVerified || true,
         }),
         [currentBrand]
     )
@@ -81,35 +72,18 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
 
     const values = watch()
 
-    const onSubmit = handleSubmit(async (data) => {
+    const onSubmit = handleSubmit(async ({name, image}) => {
         try {
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // const fullURL = await uploadImage(image);
+            const payload = {data: {name, image: "image.png"}}
+            await createBrand(payload)
             reset()
             enqueueSnackbar(currentBrand ? 'Update success!' : 'Create success!')
             router.push(paths.dashboard.brand.list)
-            console.info('DATA', data)
         } catch (error) {
             console.error(error)
         }
     })
-
-    const handleUploadImage = useCallback(async () => {
-        const files = values.image || []
-        if (files.length === 0) return
-        try {
-            await Promise.all(
-                files.map(async (file, index) => {
-                    if (file.id === '') {
-                        const imageId = await uploadImage(file.data)
-                        files[index].id = imageId
-                    }
-                })
-            )
-            setValue('image', files)
-        } catch (error) {
-            throw new Error(`thowo ${JSON.stringify(error)}`)
-        }
-    }, [setValue, values.image])
 
     const handleDrop = useCallback(
         (acceptedFiles: File[]) => {
@@ -170,55 +144,6 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
                                 }
                             />
                         </Box>
-
-                        {/* {currentBrand && (
-                            <FormControlLabel
-                                labelPlacement="start"
-                                control={
-                                    <Controller
-                                        name="status"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <Switch
-                                                {...field}
-                                                checked={
-                                                    field.value !== 'active'
-                                                }
-                                                onChange={(event) =>
-                                                    field.onChange(
-                                                        event.target.checked
-                                                            ? 'inactive'
-                                                            : 'active'
-                                                    )
-                                                }
-                                            />
-                                        )}
-                                    />
-                                }
-                                label={
-                                    <>
-                                        <Typography
-                                            variant="subtitle2"
-                                            sx={{ mb: 0.5 }}
-                                        >
-                                            Banned
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{ color: 'text.secondary' }}
-                                        >
-                                            Apply disable account
-                                        </Typography>
-                                    </>
-                                }
-                                sx={{
-                                    mx: 0,
-                                    mb: 3,
-                                    width: 1,
-                                    justifyContent: 'space-between',
-                                }}
-                            />
-                        )} */}
                         {currentBrand && (
                             <Stack
                                 justifyContent="center"
@@ -237,7 +162,7 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
                     <Card sx={{ p: 3 }}>
                         <Box
                             rowGap={3}
-                            columnGap={2}
+                            columnGap={1}
                             display="grid"
                             gridTemplateColumns={{
                                 xs: 'repeat(1, 1fr)',
@@ -245,20 +170,8 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
                             }}
                         >
                             <RHFTextField name="name" label="Brand Name" /> 
-                            {/* <RHFTextField name="tag_line" label="Tag Line" />    */}
-                            
-                            {/* <RHFTextField name="role" label="Role" /> */}
                         </Box>
                         
-                        <Stack alignItems="flex-end" sx={{ mt: 2 }}> 
-                            {/* <RHFTextField name="description" label="Description" /> */}
-                            <RHFTextField
-                            name="description"
-                            label="Description"
-                            multiline
-                            rows={4}
-                        />
-                        </Stack>
 
                         <Stack alignItems="flex-end" sx={{ mt: 3 }}>
                             <LoadingButton
