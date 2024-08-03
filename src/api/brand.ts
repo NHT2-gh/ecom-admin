@@ -3,11 +3,15 @@ import useSWR from 'swr'
 import { IBrandItem } from 'src/types/brand'
 import axios, { endpoints, fetcher } from 'src/utils/axios'
 import { status } from 'nprogress'
+import { ACCESS_TOKEN } from 'src/config-global'
 
 interface GetBrandsProps {
     page: number
     rowsPerPage: number
 }
+
+const STORAGE_KEY = 'accessToken'
+const accessToken = sessionStorage.getItem(STORAGE_KEY)
 
 export async function createBrand({
     data,
@@ -20,7 +24,7 @@ export async function createBrand({
     })
     const headers = {
         'Content-Type': 'application/json',
-        // Authorization: `Bearer ${ACCESS_TOKEN}`,
+        Authorization: `Bearer ${accessToken}`,
     }
     try {
         const res = await axios.post(endpoints.brand.create, payload, {
@@ -80,6 +84,74 @@ export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
             brandsEmpty: !false && !brands?.length,
         }),
         [response, isLoading, error, isValidating] // eslint-disable-line
+    )
+
+    return memoizedValue
+}
+
+//---------------------------------------------------------------------
+
+export async function updateBrand({
+    data,
+}: {
+    data: Omit<IBrandItem, 'status' | 'createdAt' | 'updatedAt'>
+}) {
+    const payload = JSON.stringify({
+        id: data.id,
+        name: data.name,
+        image: data.image,
+    })
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+    }
+    // try {
+    //     const res = await axios.put(`${endpoints.brand.edit}/${payload.id}`, null, {
+    //         headers,
+    //     });
+    //     if (res?.data.error) {
+    //         throw new Error(`Error: ${res.data.error}`);
+    //     }
+    //     return res.data;
+    // } catch (error) {
+    //     throw new Error(`Exception: ${error}`);
+    // }
+}
+
+//---------------------------------------------------------------------
+
+export function useGetBrand(id: string) {
+    const url = endpoints.brand.edit
+
+    const { data: res, error } = useSWR(`${url}${id}`, fetcher, {
+        onErrorRetry(err, key, config, revalidate, { retryCount }) {
+            if (retryCount >= 10) return
+
+            if (err.status === 404) return
+
+            setTimeout(() => revalidate({ retryCount }), 5000)
+        },
+    })
+
+    const data = res?.data
+
+    const brand: IBrandItem | undefined = data
+        ? {
+              id: data?.id,
+              name: data?.name,
+              image: data?.image,
+              updatedAt: data?.updated_at,
+              createdAt: data?.created_at,
+              status: data?.status,
+          }
+        : undefined
+
+    const memoizedValue = useMemo(
+        () => ({
+            brand,
+            error,
+        }),
+        [data, error] // eslint-disable-line
     )
 
     return memoizedValue

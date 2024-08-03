@@ -122,14 +122,6 @@ export function useNavData() {
                                 title: 'list',
                                 path: paths.dashboard.brand.list,
                             },
-                            {
-                                title: 'create',
-                                path: paths.dashboard.brand.new,
-                            },
-                            {
-                                title: 'details',
-                                path: paths.dashboard.brand.demo.details,
-                            },
                         ],
                     },
                 ],

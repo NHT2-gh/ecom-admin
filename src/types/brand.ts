@@ -7,6 +7,8 @@ export type IBrandItem = {
     status: string
     createdAt: Date
     updatedAt: Date
+    created_at?: string
+    updated_at?: string
 }
 
 export type IBrandTableFilters = {

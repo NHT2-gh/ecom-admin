@@ -31,7 +31,6 @@ type Props = {
     row: IBrandItem
     selected: boolean
     onEditRow: VoidFunction
-    onViewRow: VoidFunction
     onSelectRow: VoidFunction
     onDeleteRow: VoidFunction
 }
@@ -42,9 +41,9 @@ export default function BrandTableRow({
     onSelectRow,
     onDeleteRow,
     onEditRow,
-    onViewRow,
 }: Props) {
     const { name, image, createdAt, updatedAt, status } = row
+
     console.log('row', row)
 
     const confirm = useBoolean()
@@ -73,7 +72,6 @@ export default function BrandTableRow({
                                 noWrap
                                 color="inherit"
                                 variant="subtitle2"
-                                onClick={onViewRow}
                                 sx={{ cursor: 'pointer' }}
                             >
                                 {name}
@@ -148,8 +146,8 @@ export default function BrandTableRow({
                         variant="soft"
                         color={
                             (status === 'active' && 'success') ||
-                            (status === 'pending' && 'warning') ||
-                            (status === 'banned' && 'error') ||
+                            // (status === 'pending' && 'warning') ||
+                            // (status === 'banned' && 'error') ||
                             'default'
                         }
                     >
@@ -188,16 +186,6 @@ export default function BrandTableRow({
                 arrow="right-top"
                 sx={{ width: 140 }}
             >
-                <MenuItem
-                    onClick={() => {
-                        onViewRow()
-                        popover.onClose()
-                    }}
-                >
-                    <Iconify icon="solar:eye-bold" />
-                    View
-                </MenuItem>
-
                 <MenuItem
                     onClick={() => {
                         onEditRow()

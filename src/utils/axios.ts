@@ -32,7 +32,7 @@ const VERSION_PREFIX = '/v1'
 export const endpoints = {
     auth: {
         me: '',
-        login: '',
+        login: `${VERSION_PREFIX}/login`,
         register: '',
         forgotPassword: '',
     },
@@ -47,5 +47,6 @@ export const endpoints = {
     brand: {
         create: `${VERSION_PREFIX}/brands`,
         list: `${VERSION_PREFIX}/brands`,
+        edit: `${VERSION_PREFIX}/brands/`,
     },
 }

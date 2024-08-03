@@ -48,8 +48,8 @@ export default function JwtLoginView() {
     })
 
     const defaultValues = {
-        email: 'demo@gmail.com',
-        password: 'demo1234',
+        email: 'viettranx@gmail.com',
+        password: '123456',
     }
 
     const methods = useForm({
@@ -65,7 +65,7 @@ export default function JwtLoginView() {
 
     const onSubmit = handleSubmit(async (data) => {
         try {
-            // await login?.(data.email, data.password)
+            await login?.(data.email, data.password)
 
             router.push(returnTo || PATH_AFTER_LOGIN)
         } catch (error) {

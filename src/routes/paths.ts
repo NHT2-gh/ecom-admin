@@ -61,7 +61,7 @@ export const paths = {
             root: `${ROOTS.DASHBOARD}/brand`,
             list: `${ROOTS.DASHBOARD}/brand/list`,
             new: `${ROOTS.DASHBOARD}/brand/new`,
-            details: (id: string) => `${ROOTS.DASHBOARD}/brand/${id}`,
+            edit: (id: string) => `${ROOTS.DASHBOARD}/brand/${id}/edit`,
             demo: {
                 details: `${ROOTS.DASHBOARD}/brand/${MOCK_ID}`,
             },

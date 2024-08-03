@@ -1,203 +1,212 @@
-'use client'
+// 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+// import { useState, useEffect, useCallback } from 'react'
 
-import Tab from '@mui/material/Tab'
-import Box from '@mui/material/Box'
-import Tabs from '@mui/material/Tabs'
-import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
-import { alpha } from '@mui/material/styles'
-import Container from '@mui/material/Container'
-import Grid from '@mui/material/Unstable_Grid2'
-import Typography from '@mui/material/Typography'
+// import Tab from '@mui/material/Tab'
+// import Box from '@mui/material/Box'
+// import Tabs from '@mui/material/Tabs'
+// import Card from '@mui/material/Card'
+// import Button from '@mui/material/Button'
+// import { alpha } from '@mui/material/styles'
+// import Container from '@mui/material/Container'
+// import Grid from '@mui/material/Unstable_Grid2'
+// import Typography from '@mui/material/Typography'
 
-import { paths } from 'src/routes/paths'
-import { RouterLink } from 'src/routes/components'
+// import { paths } from 'src/routes/paths'
+// import { RouterLink } from 'src/routes/components'
 
-import { useGetProduct } from 'src/api/product'
-import { PRODUCT_PUBLISH_OPTIONS } from 'src/_mock'
+// import { useGetProduct } from 'src/api/product'
+// import { PRODUCT_PUBLISH_OPTIONS } from 'src/_mock'
 
-import Iconify from 'src/components/iconify'
-import EmptyContent from 'src/components/empty-content'
-import { useSettingsContext } from 'src/components/settings'
+// import Iconify from 'src/components/iconify'
+// import EmptyContent from 'src/components/empty-content'
+// import { useSettingsContext } from 'src/components/settings'
 
-import { ProductDetailsSkeleton } from '../product-skeleton'
-import ProductDetailsSummary from '../product-details-summary'
-import ProductDetailsToolbar from '../product-details-toolbar'
-import ProductDetailsCarousel from '../product-details-carousel'
-import ProductDetailsDescription from '../product-details-description'
+// import { useProducts } from 'src/sections/brand/context/brand-context'
 
-// ----------------------------------------------------------------------
+// import { ProductDetailsSkeleton } from '../product-skeleton'
+// import ProductDetailsSummary from '../product-details-summary'
+// import ProductDetailsToolbar from '../product-details-toolbar'
+// import ProductDetailsCarousel from '../product-details-carousel'
+// import ProductDetailsDescription from '../product-details-description'
+// import { IProductItem } from 'src/types/product'
 
-const SUMMARY = [
-    {
-        title: '100% Original',
-        description:
-            'Chocolate bar candy canes ice cream toffee cookie halvah.',
-        icon: 'solar:verified-check-bold',
-    },
-    {
-        title: '10 Day Replacement',
-        description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
-        icon: 'solar:clock-circle-bold',
-    },
-    {
-        title: 'Year Warranty',
-        description: 'Cotton candy gingerbread cake I love sugar sweet.',
-        icon: 'solar:shield-check-bold',
-    },
-]
+// // ----------------------------------------------------------------------
 
-// ----------------------------------------------------------------------
+// const SUMMARY = [
+//     {
+//         title: '100% Original',
+//         description:
+//             'Chocolate bar candy canes ice cream toffee cookie halvah.',
+//         icon: 'solar:verified-check-bold',
+//     },
+//     {
+//         title: '10 Day Replacement',
+//         description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
+//         icon: 'solar:clock-circle-bold',
+//     },
+//     {
+//         title: 'Year Warranty',
+//         description: 'Cotton candy gingerbread cake I love sugar sweet.',
+//         icon: 'solar:shield-check-bold',
+//     },
+// ]
 
-type Props = {
-    id: string
-}
+// // ----------------------------------------------------------------------
 
-export default function ProductDetailsView({ id }: Props) {
-    const { product, error } = useGetProduct(id)
+// type Props = {
+//     id: string
+// }
 
-    const settings = useSettingsContext()
+// export default function ProductDetailsView({ id }: Props) {
+//     // const { product, error } = useGetProduct(id)
 
-    const [currentTab, setCurrentTab] = useState('description')
+//     const settings = useSettingsContext()
 
-    const [publish, setPublish] = useState('')
+//     const {products } = useProducts();
+//     const [product, setProduct] = useState<IProductItem|undefined>()
+//     const [currentTab, setCurrentTab] = useState('description')
 
-    useEffect(() => {
-        if (product) {
-            setPublish(product?.publish)
-        }
-    }, [product])
+//     const [publish, setPublish] = useState('')
 
-    const handleChangePublish = useCallback((newValue: string) => {
-        setPublish(newValue)
-    }, [])
+//     useEffect(() => {
 
-    const handleChangeTab = useCallback(
-        (event: React.SyntheticEvent, newValue: string) => {
-            setCurrentTab(newValue)
-        },
-        []
-    )
+//         const productNew = products.find((pr) => pr.id === id)
+//         if (productNew) {
 
-    const renderSkeleton = <ProductDetailsSkeleton />
+//             setPublish(productNew?.publish)
+//         }
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//     }, [products])
 
-    const renderError = (
-        <EmptyContent
-            filled
-            title={`${error}`}
-            action={
-                <Button
-                    component={RouterLink}
-                    href={paths.dashboard.product.root}
-                    startIcon={
-                        <Iconify icon="eva:arrow-ios-back-fill" width={16} />
-                    }
-                    sx={{ mt: 3 }}
-                >
-                    Back to List
-                </Button>
-            }
-            sx={{ py: 10 }}
-        />
-    )
+//     const handleChangePublish = useCallback((newValue: string) => {
+//         setPublish(newValue)
+//     }, [])
 
-    const renderProduct = product && (
-        <>
-            <ProductDetailsToolbar
-                backLink={paths.dashboard.product.root}
-                editLink={paths.dashboard.product.edit(`${product?.id}`)}
-                liveLink=""
-                publish={publish || ''}
-                onChangePublish={handleChangePublish}
-                publishOptions={PRODUCT_PUBLISH_OPTIONS}
-            />
+//     const handleChangeTab = useCallback(
+//         (event: React.SyntheticEvent, newValue: string) => {
+//             setCurrentTab(newValue)
+//         },
+//         []
+//     )
 
-            <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
-                <Grid xs={12} md={6} lg={7}>
-                    <ProductDetailsCarousel product={product} />
-                </Grid>
+//     const renderSkeleton = <ProductDetailsSkeleton />
 
-                <Grid xs={12} md={6} lg={5}>
-                    <ProductDetailsSummary product={product} />
-                </Grid>
-            </Grid>
+//     const renderError = (
+//         <EmptyContent
+//             filled
+//             title="ersror"
+//             action={
+//                 <Button
+//                     component={RouterLink}
+//                     href={paths.dashboard.product.root}
+//                     startIcon={
+//                         <Iconify icon="eva:arrow-ios-back-fill" width={16} />
+//                     }
+//                     sx={{ mt: 3 }}
+//                 >
+//                     Back to List
+//                 </Button>
+//             }
+//             sx={{ py: 10 }}
+//         />
+//     )
 
-            <Box
-                gap={5}
-                display="grid"
-                gridTemplateColumns={{
-                    xs: 'repeat(1, 1fr)',
-                    md: 'repeat(3, 1fr)',
-                }}
-                sx={{ my: 10 }}
-            >
-                {SUMMARY.map((item) => (
-                    <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
-                        <Iconify
-                            icon={item.icon}
-                            width={32}
-                            sx={{ color: 'primary.main' }}
-                        />
+//     const renderProduct = product &&  (
+//         <>
+//             <ProductDetailsToolbar
+//                 backLink={paths.dashboard.product.root}
+//                 editLink={paths.dashboard.product.edit(`${product.id}`)}
+//                 liveLink=""
+//                 publish={publish || ''}
+//                 onChangePublish={handleChangePublish}
+//                 publishOptions={PRODUCT_PUBLISH_OPTIONS}
+//             />
 
-                        <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
-                            {item.title}
-                        </Typography>
+//             <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
+//                 <Grid xs={12} md={6} lg={7}>
+//                     <ProductDetailsCarousel product={product} />
+//                 </Grid>
 
-                        <Typography
-                            variant="body2"
-                            sx={{ color: 'text.secondary' }}
-                        >
-                            {item.description}
-                        </Typography>
-                    </Box>
-                ))}
-            </Box>
+//                 <Grid xs={12} md={6} lg={5}>
+//                     <ProductDetailsSummary product={product} />
+//                 </Grid>
+//             </Grid>
 
-            <Card>
-                <Tabs
-                    value={currentTab}
-                    onChange={handleChangeTab}
-                    sx={{
-                        px: 3,
-                        boxShadow: (theme) =>
-                            `inset 0 -2px 0 0 ${alpha(
-                                theme.palette.grey[500],
-                                0.08
-                            )}`,
-                    }}
-                >
-                    {[
-                        {
-                            value: 'description',
-                            label: 'Description',
-                        },
-                    ].map((tab) => (
-                        <Tab
-                            key={tab.value}
-                            value={tab.value}
-                            label={tab.label}
-                        />
-                    ))}
-                </Tabs>
+//             <Box
+//                 gap={5}
+//                 display="grid"
+//                 gridTemplateColumns={{
+//                     xs: 'repeat(1, 1fr)',
+//                     md: 'repeat(3, 1fr)',
+//                 }}
+//                 sx={{ my: 10 }}
+//             >
+//                 {SUMMARY.map((item) => (
+//                     <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
+//                         <Iconify
+//                             icon={item.icon}
+//                             width={32}
+//                             sx={{ color: 'primary.main' }}
+//                         />
 
-                {currentTab === 'description' && (
-                    <ProductDetailsDescription
-                        description={product?.description}
-                    />
-                )}
-            </Card>
-        </>
-    )
+//                         <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
+//                             {item.title}
+//                         </Typography>
 
-    return (
-        <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-            {!product && renderSkeleton}
+//                         <Typography
+//                             variant="body2"
+//                             sx={{ color: 'text.secondary' }}
+//                         >
+//                             {item.description}
+//                         </Typography>
+//                     </Box>
+//                 ))}
+//             </Box>
 
-            {error && renderError}
+//             <Card>
+//                 <Tabs
+//                     value={currentTab}
+//                     onChange={handleChangeTab}
+//                     sx={{
+//                         px: 3,
+//                         boxShadow: (theme) =>
+//                             `inset 0 -2px 0 0 ${alpha(
+//                                 theme.palette.grey[500],
+//                                 0.08
+//                             )}`,
+//                     }}
+//                 >
+//                     {[
+//                         {
+//                             value: 'description',
+//                             label: 'Description',
+//                         },
+//                     ].map((tab) => (
+//                         <Tab
+//                             key={tab.value}
+//                             value={tab.value}
+//                             label={tab.label}
+//                         />
+//                     ))}
+//                 </Tabs>
 
-            {product && renderProduct}
-        </Container>
-    )
-}
+//                 {currentTab === 'description' && (
+//                     <ProductDetailsDescription
+//                         description={product?.description}
+//                     />
+//                 )}
+//             </Card>
+//         </>
+//     )
+
+//     return (
+//         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+//             {!product && renderSkeleton}
+
+//             {false && renderError}
+
+//             {product && renderProduct}
+//         </Container>
+//     )
+// }

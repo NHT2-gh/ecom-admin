@@ -20,6 +20,8 @@ import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form'
 
 import { IBrandItem } from 'src/types/brand'
 
+import { updateBrand } from 'src/api/brand'
+
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -36,7 +38,7 @@ export default function BrandQuickEditForm({
     const { enqueueSnackbar } = useSnackbar()
 
     const NewUserSchema = Yup.object().shape({
-        name: Yup.string().required('Name is required'),
+        name: Yup.string().required('Brand Name is required'),
     })
 
     const defaultValues = useMemo(
@@ -64,6 +66,9 @@ export default function BrandQuickEditForm({
             reset()
             onClose()
             enqueueSnackbar('Update success!')
+
+            // await updateBrand({ id: currentBrand?.id })
+
             console.info('DATA', data)
         } catch (error) {
             console.error(error)
@@ -110,7 +115,7 @@ export default function BrandQuickEditForm({
 
                         <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
 
-                        <RHFTextField name="name" label="Full Name" />
+                        <RHFTextField name="name" label="Brand Name" />
                     </Box>
                 </DialogContent>
 

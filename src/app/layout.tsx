@@ -13,6 +13,7 @@ import SnackbarProvider from 'src/components/snackbar/snackbar-provider'
 import { SettingsDrawer, SettingsProvider } from 'src/components/settings'
 
 import { AuthProvider } from 'src/auth/context/jwt'
+import { ProductsProvider } from 'src/sections/brand/context/brand-context'
 
 // ----------------------------------------------------------------------
 
@@ -42,13 +43,15 @@ export default function RootLayout({ children }: Props) {
                             }}
                         >
                             <ThemeProvider>
-                                <MotionLazy>
-                                    <SnackbarProvider>
-                                        <SettingsDrawer />
-                                        <ProgressBar />
-                                        {children}
-                                    </SnackbarProvider>
-                                </MotionLazy>
+                                <ProductsProvider>
+                                    <MotionLazy>
+                                        <SnackbarProvider>
+                                            <SettingsDrawer />
+                                            <ProgressBar />
+                                            {children}
+                                        </SnackbarProvider>
+                                    </MotionLazy>
+                                </ProductsProvider>
                             </ThemeProvider>
                         </SettingsProvider>
                     </LocalizationProvider>
