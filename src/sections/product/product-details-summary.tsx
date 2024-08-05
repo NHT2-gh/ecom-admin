@@ -32,7 +32,6 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
     const {
         id,
         name,
-        sizes,
         price,
         coverUrl,
         colors,
@@ -50,8 +49,7 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
         coverUrl,
         available,
         price,
-        colors: colors[0],
-        size: sizes[4],
+        // colors:colors?  colors[0] :[],
         quantity: available < 1 ? 0 : 1,
     }
 
@@ -89,60 +87,28 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
         </Box>
     )
 
-    const renderColorOptions = (
-        <Stack direction="row">
-            <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-                Color
-            </Typography>
+    // const renderColorOptions = (
+    //     <Stack direction="row">
+    //         <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+    //             Color
+    //         </Typography>
 
-            <Controller
-                name="colors"
-                control={control}
-                render={({ field }) => (
-                    <ColorPicker
-                        colors={colors}
-                        selected={field.value}
-                        onSelectColor={(color) =>
-                            field.onChange(color as string)
-                        }
-                        limit={4}
-                    />
-                )}
-            />
-        </Stack>
-    )
-
-    const renderSizeOptions = (
-        <Stack direction="row">
-            <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-                Size
-            </Typography>
-
-            <RHFSelect
-                name="size"
-                size="small"
-                helperText={
-                    <Link underline="always" color="textPrimary">
-                        Size Chart
-                    </Link>
-                }
-                sx={{
-                    maxWidth: 88,
-                    [`& .${formHelperTextClasses.root}`]: {
-                        mx: 0,
-                        mt: 1,
-                        textAlign: 'right',
-                    },
-                }}
-            >
-                {sizes.map((size) => (
-                    <MenuItem key={size} value={size}>
-                        {size}
-                    </MenuItem>
-                ))}
-            </RHFSelect>
-        </Stack>
-    )
+    //         <Controller
+    //             name="colors"
+    //             control={control}
+    //             render={({ field }) => (
+    //                 <ColorPicker
+    //                     colors={colors}
+    //                     selected={field.value}
+    //                     onSelectColor={(color) =>
+    //                         field.onChange(color as string)
+    //                     }
+    //                     limit={4}
+    //                 />
+    //             )}
+    //         />
+    //     </Stack>
+    // )
 
     const renderQuantity = (
         <Stack direction="row">
@@ -265,9 +231,7 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
 
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
-                {renderColorOptions}
-
-                {renderSizeOptions}
+                {/* {renderColorOptions} */}
 
                 {renderQuantity}
 

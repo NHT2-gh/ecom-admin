@@ -55,13 +55,13 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
     if (action.type === Types.LOGIN) {
         return {
             ...state,
-            user: action.payload.user,
+            user: {},
         }
     }
     if (action.type === Types.REGISTER) {
         return {
             ...state,
-            user: action.payload.user,
+            user: {},
         }
     }
     if (action.type === Types.LOGOUT) {
@@ -136,7 +136,7 @@ export function AuthProvider({ children }: Props) {
 
         const res = await axios.post(endpoints.auth.login, data)
 
-        const { accessToken, user } = res.data
+        const { accessToken } = res.data.data
 
         setSession(accessToken)
 
@@ -144,7 +144,6 @@ export function AuthProvider({ children }: Props) {
             type: Types.LOGIN,
             payload: {
                 user: {
-                    ...user,
                     accessToken,
                 },
             },
@@ -196,6 +195,7 @@ export function AuthProvider({ children }: Props) {
     // ----------------------------------------------------------------------
 
     const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated'
+    // console.log('checkAuthenticated', checkAuthenticated)
 
     const status = state.loading ? 'loading' : checkAuthenticated
 

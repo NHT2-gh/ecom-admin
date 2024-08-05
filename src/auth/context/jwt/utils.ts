@@ -34,26 +34,26 @@ export const isValidToken = (accessToken: string) => {
 
 // ----------------------------------------------------------------------
 
-export const tokenExpired = (exp: number) => {
-    // eslint-disable-next-line prefer-const
-    let expiredTimer
+// export const tokenExpired = (exp: number) => {
+//     // eslint-disable-next-line prefer-const
+//     let expiredTimer
 
-    const currentTime = Date.now()
+//     const currentTime = Date.now()
 
-    // Test token expires after 10s
-    // const timeLeft = currentTime + 10000 - currentTime; // ~10s
-    const timeLeft = exp * 1000 - currentTime
+//     // Test token expires after 10s
+//     // const timeLeft = currentTime + 10000 - currentTime; // ~10s
+//     // const timeLeft = exp * 1000 - currentTime
 
-    clearTimeout(expiredTimer)
+//     clearTimeout(expiredTimer)
 
-    expiredTimer = setTimeout(() => {
-        alert('Token expired')
+//     expiredTimer = setTimeout(() => {
+//         alert('Token expired')
 
-        sessionStorage.removeItem('accessToken')
+//         sessionStorage.removeItem('accessToken')
 
-        window.location.href = paths.auth.jwt.login
-    }, timeLeft)
-}
+//         window.location.href = paths.auth.jwt.login
+//     }, timeLeft)
+// }
 
 // ----------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ export const setSession = (accessToken: string | null) => {
 
         // This function below will handle when token is expired
         const { exp } = jwtDecode(accessToken) // ~3 days by minimals server
-        tokenExpired(exp)
+        // tokenExpired(exp)
     } else {
         sessionStorage.removeItem('accessToken')
 

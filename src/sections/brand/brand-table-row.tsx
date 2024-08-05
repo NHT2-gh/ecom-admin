@@ -1,21 +1,21 @@
 import { format } from 'date-fns'
 
-import Box from '@mui/material/Box'
+// import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'
 import Avatar from '@mui/material/Avatar'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
-import Tooltip from '@mui/material/Tooltip'
-import Checkbox from '@mui/material/Checkbox'
+// import Tooltip from '@mui/material/Tooltip'
+// import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
-import LinearProgress from '@mui/material/LinearProgress'
+// import LinearProgress from '@mui/material/LinearProgress'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 
-import { fCurrency } from 'src/utils/format-number'
+// import { fCurrency } from 'src/utils/format-number'
 
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'
@@ -24,7 +24,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover'
 
 import { IBrandItem } from 'src/types/brand'
 
-import BrandQuickEditForm from './brand-quick-edit-form'
+// import BrandQuickEditForm from './brand-quick-edit-form'
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -44,10 +44,8 @@ export default function BrandTableRow({
 }: Props) {
     const { name, image, createdAt, updatedAt, status } = row
 
-    console.log('row', row)
-
     const confirm = useBoolean()
-    const quickEdit = useBoolean()
+    // const quickEdit = useBoolean()
     const popover = usePopover()
 
     return (
@@ -156,14 +154,14 @@ export default function BrandTableRow({
                 </TableCell>
 
                 <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-                    <Tooltip title="Quick Edit" placement="top" arrow>
+                    {/* <Tooltip title="Quick Edit" placement="top" arrow>
                         <IconButton
                             color={quickEdit.value ? 'inherit' : 'default'}
                             onClick={quickEdit.onTrue}
                         >
                             <Iconify icon="solar:pen-bold" />
                         </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
 
                     <IconButton
                         color={popover.open ? 'inherit' : 'default'}
@@ -174,11 +172,11 @@ export default function BrandTableRow({
                 </TableCell>
             </TableRow>
 
-            <BrandQuickEditForm
+            {/* <BrandQuickEditForm
                 currentBrand={row}
                 open={quickEdit.value}
                 onClose={quickEdit.onFalse}
-            />
+            /> */}
 
             <CustomPopover
                 open={popover.open}

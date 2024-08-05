@@ -6,72 +6,61 @@ import Button from '@mui/material/Button'
 import Avatar from '@mui/material/Avatar'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
-import Checkbox from '@mui/material/Checkbox'
+import Tooltip from '@mui/material/Tooltip'
+// import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
-import LinearProgress from '@mui/material/LinearProgress'
+// import LinearProgress from '@mui/material/LinearProgress'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 
-import { fCurrency } from 'src/utils/format-number'
+// import { fCurrency } from 'src/utils/format-number'
 
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'
 import { ConfirmDialog } from 'src/components/custom-dialog'
 import CustomPopover, { usePopover } from 'src/components/custom-popover'
 
-import { IProductItem } from 'src/types/product'
+import { ICategoryItem } from 'src/types/categorys'
 
+import CategoryQuickEditForm from './category-quick-edit-form'
 // ----------------------------------------------------------------------
 
 type Props = {
-    row: IProductItem
+    row: ICategoryItem
     selected: boolean
     onEditRow: VoidFunction
-    onViewRow: VoidFunction
     onSelectRow: VoidFunction
     onDeleteRow: VoidFunction
 }
 
-export default function ProductTableRow({
+export default function CategoryTableRow({
     row,
     selected,
     onSelectRow,
     onDeleteRow,
     onEditRow,
-    onViewRow,
 }: Props) {
-    const {
-        name,
-        price,
-        publish,
-        coverUrl,
-        category,
-        quantity,
-        createdAt,
-        available,
-        inventoryType,
-    } = row
+    const { name, description, createdAt, updatedAt, status } = row
 
     const confirm = useBoolean()
-
+    const quickEdit = useBoolean()
     const popover = usePopover()
 
     return (
         <>
             <TableRow hover selected={selected}>
-                <TableCell padding="checkbox">
+                {/* <TableCell padding="checkbox">
                     <Checkbox checked={selected} onClick={onSelectRow} />
-                </TableCell>
+                </TableCell> */}
 
                 <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar
+                    {/* <Avatar
                         alt={name}
-                        src={coverUrl}
                         variant="rounded"
                         sx={{ width: 64, height: 64, mr: 2 }}
-                    />
+                    /> */}
 
                     <ListItemText
                         disableTypography
@@ -80,23 +69,21 @@ export default function ProductTableRow({
                                 noWrap
                                 color="inherit"
                                 variant="subtitle2"
-                                onClick={onViewRow}
                                 sx={{ cursor: 'pointer' }}
                             >
                                 {name}
                             </Link>
                         }
-                        secondary={
-                            <Box
-                                component="div"
-                                sx={{
-                                    typography: 'body2',
-                                    color: 'text.disabled',
-                                }}
-                            >
-                                {category && category.name}
-                            </Box>
-                        }
+                    />
+                </TableCell>
+
+                <TableCell>
+                    <ListItemText
+                        primary={description}
+                        primaryTypographyProps={{
+                            typography: 'body2',
+                            noWrap: true,
+                        }}
                     />
                 </TableCell>
 
@@ -116,7 +103,23 @@ export default function ProductTableRow({
                     />
                 </TableCell>
 
-                <TableCell
+                <TableCell>
+                    <ListItemText
+                        primary={format(new Date(updatedAt), 'dd MMM yyyy')}
+                        secondary={format(new Date(updatedAt), 'p')}
+                        primaryTypographyProps={{
+                            typography: 'body2',
+                            noWrap: true,
+                        }}
+                        secondaryTypographyProps={{
+                            mt: 0.5,
+                            component: 'span',
+                            typography: 'caption',
+                        }}
+                    />
+                </TableCell>
+
+                {/* <TableCell
                     sx={{ typography: 'caption', color: 'text.secondary' }}
                 >
                     <LinearProgress
@@ -130,22 +133,36 @@ export default function ProductTableRow({
                         sx={{ mb: 1, height: 6, maxWidth: 80 }}
                     />
                     {!!available && available} {inventoryType}
-                </TableCell>
+                </TableCell> */}
 
-                <TableCell>{fCurrency(price)}</TableCell>
+                {/* <TableCell>{fCurrency(price)}</TableCell> */}
 
                 <TableCell>
                     <Label
                         variant="soft"
-                        color={(publish === 'published' && 'info') || 'default'}
+                        color={
+                            (status === 'active' && 'success') ||
+                            // (status === 'pending' && 'warning') ||
+                            // (status === 'banned' && 'error') ||
+                            'default'
+                        }
                     >
-                        {publish}
+                        {status}
                     </Label>
                 </TableCell>
 
-                <TableCell align="right">
+                <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+                    {/* <Tooltip title="Quick Edit" placement="top" arrow>
+                        <IconButton
+                            color={quickEdit.value ? 'inherit' : 'default'}
+                            onClick={quickEdit.onTrue}
+                        >
+                            <Iconify icon="solar:pen-bold" />
+                        </IconButton>
+                    </Tooltip> */}
+
                     <IconButton
-                        color={popover.open ? 'primary' : 'default'}
+                        color={popover.open ? 'inherit' : 'default'}
                         onClick={popover.onOpen}
                     >
                         <Iconify icon="eva:more-vertical-fill" />
@@ -153,22 +170,18 @@ export default function ProductTableRow({
                 </TableCell>
             </TableRow>
 
+            {/* <CategoryQuickEditForm
+                currentCategory={row}
+                open={quickEdit.value}
+                onClose={quickEdit.onFalse}
+            /> */}
+
             <CustomPopover
                 open={popover.open}
                 onClose={popover.onClose}
                 arrow="right-top"
                 sx={{ width: 140 }}
             >
-                <MenuItem
-                    onClick={() => {
-                        onViewRow()
-                        popover.onClose()
-                    }}
-                >
-                    <Iconify icon="solar:eye-bold" />
-                    View
-                </MenuItem>
-
                 <MenuItem
                     onClick={() => {
                         onEditRow()

@@ -21,7 +21,6 @@ import { useRouter } from 'src/routes/hooks'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import {
-    PRODUCT_SIZE_OPTIONS,
     PRODUCT_GENDER_OPTIONS,
     PRODUCT_COLOR_NAME_OPTIONS,
     PRODUCT_CATEGORY_GROUP_OPTIONS,
@@ -40,7 +39,7 @@ import FormProvider, {
 
 import { IProductItem } from 'src/types/product'
 import { createOrUpdateProduct } from 'src/api/product'
-import { ImageItem } from 'src/types/image'
+// import { ImageItem } from 'src/types/image'
 import { uploadImage } from 'src/api/image'
 
 // ----------------------------------------------------------------------
@@ -77,7 +76,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
         () => ({
             name: currentProduct?.name || '',
             description: currentProduct?.description || '',
-            subDescription: currentProduct?.subDescription || '',
+            // subDescription: currentProduct?.subDescription || '',
             images: currentProduct?.images || [],
             //
             code: currentProduct?.code || '',
@@ -86,7 +85,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             priceSale: currentProduct?.priceSale || 0,
             gender: currentProduct?.gender || '',
             category:
-                currentProduct?.category ||
+                currentProduct?.category.name ||
                 PRODUCT_CATEGORY_GROUP_OPTIONS[0].classify[0],
             colors: currentProduct?.colors || [],
             // sizes: currentProduct?.sizes || [],
@@ -152,9 +151,9 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
         try {
             await Promise.all(
                 files.map(async (file, index) => {
-                    if (file.id === '') {
-                        const imageId = await uploadImage(file.data)
-                        files[index].id = imageId
+                    if (typeof file !== 'string') {
+                        const imageId = await uploadImage(file)
+                        files[index] = imageId
                     }
                 })
             )
@@ -167,16 +166,14 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
     const handleDrop = useCallback(
         (acceptedFiles: File[]) => {
             const files = values.images || []
+            // console.log('files', acceptedFiles)
 
-            const newFiles: ImageItem[] = acceptedFiles.map(
-                (file) =>
-                    ({
-                        id: '',
-                        data: Object.assign(file, {
-                            preview: URL.createObjectURL(file),
-                        }),
-                    }) satisfies ImageItem
+            const newFiles = acceptedFiles.map((file) =>
+                Object.assign(file, {
+                    preview: URL.createObjectURL(file),
+                })
             )
+
             setValue('images', [...files, ...newFiles], {
                 shouldValidate: true,
             })
@@ -188,7 +185,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
         (inputFile: File | string) => {
             const filtered =
                 values.images &&
-                values.images?.filter((file) => file.data !== inputFile)
+                values.images?.filter((file) => file !== inputFile)
             setValue('images', filtered)
         },
         [setValue, values.images]
@@ -243,7 +240,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                 onDrop={handleDrop}
                                 onRemove={handleRemoveFile}
                                 onRemoveAll={handleRemoveAllFiles}
-                                onUpload={handleUploadImage}
+                                onUpload={() => console.info('ON UPLOAD')}
                             />
                         </Stack>
                     </Stack>
@@ -326,12 +323,12 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                 options={PRODUCT_COLOR_NAME_OPTIONS}
                             />
 
-                            <RHFMultiSelect
+                            {/* <RHFMultiSelect
                                 checkbox
                                 name="sizes"
                                 label="Sizes"
                                 options={PRODUCT_SIZE_OPTIONS}
-                            />
+                            />  */}
                         </Box>
 
                         <Stack spacing={1}>

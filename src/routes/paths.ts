@@ -66,5 +66,14 @@ export const paths = {
                 details: `${ROOTS.DASHBOARD}/brand/${MOCK_ID}`,
             },
         },
+        category: {
+            root: `${ROOTS.DASHBOARD}/category`,
+            list: `${ROOTS.DASHBOARD}/category/list`,
+            new: `${ROOTS.DASHBOARD}/category/new`,
+            edit: (id: string) => `${ROOTS.DASHBOARD}/category/${id}/edit`,
+            demo: {
+                details: `${ROOTS.DASHBOARD}/category/${MOCK_ID}`,
+            },
+        },
     },
 }

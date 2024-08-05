@@ -9,10 +9,14 @@ export type IProductItem = {
     // sizes: string[]
     publish: string
     coverUrl: string
-    images: string[]
+    images: Array<string | File>
+
     colors: string[]
     quantity: number
-    category: string
+    category: {
+        id: string
+        name: string
+    }
     available: number
     totalSold: number
     description: string
@@ -30,6 +34,8 @@ export type IProductItem = {
         enabled: boolean
         content: string
     }
+    created_at: Date
+    update_at: Date
 }
 
 export type IProductTableFilterValue = string | string[]

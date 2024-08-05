@@ -18,11 +18,12 @@ import { RouterLink } from 'src/routes/components'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 
-import { deleteBrand, useGetBrands } from 'src/api/brand'
+import { useSnackbar } from 'src/components/snackbar'
+
+import { useGetCategorys, deleteCategory } from 'src/api/category'
 
 import Iconify from 'src/components/iconify'
 import Scrollbar from 'src/components/scrollbar'
-import { useSnackbar } from 'src/components/snackbar'
 import { useSettingsContext } from 'src/components/settings'
 import { ConfirmDialog } from 'src/components/custom-dialog'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs'
@@ -39,19 +40,21 @@ import {
 } from 'src/components/table'
 
 import {
-    IBrandItem,
-    IBrandTableFilters,
-    IBrandTableFilterValue,
-} from 'src/types/brand'
+    ICategoryItem,
+    ICategoryTableFilters,
+    ICategoryTableFilterValue,
+} from 'src/types/categorys'
 
-import BrandTableRow from '../brand-table-row'
-import BrandTableToolbar from '../brand-table-toolbar'
-import BrandTableFiltersResult from '../brand-table-filters-result'
+import CategoryTableRow from '../category-table-row'
+import CategoryTableToolbar from '../category-table-toolbar'
+import CategoryTableFiltersResult from '../category-table-filters-result'
+// import { width } from '@mui/system'
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'name', label: 'Brand' },
+    { id: 'name', label: 'Category Name' },
+    { id: 'description', label: 'Description', width: 250 },
     { id: 'createdAt', label: 'Create at', width: 160 },
     { id: 'updatedAt', label: 'Update at', width: 160 },
     { id: 'status', label: 'Publish', width: 110 },
@@ -60,7 +63,7 @@ const TABLE_HEAD = [
 
 const STATUS_OPTIONS = [{ value: 'published', label: 'Published' }]
 
-const defaultFilters: IBrandTableFilters = {
+const defaultFilters: ICategoryTableFilters = {
     name: '',
     status: [],
     // stock: [],
@@ -68,18 +71,18 @@ const defaultFilters: IBrandTableFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function BrandListView() {
+export default function CategoryListView() {
     const router = useRouter()
 
     const table = useTable()
 
     const settings = useSettingsContext()
 
-    const [tableData, setTableData] = useState<IBrandItem[]>([])
+    const [tableData, setTableData] = useState<ICategoryItem[]>([])
 
     const [filters, setFilters] = useState(defaultFilters)
 
-    const { brands, brandsLoading, brandsEmpty } = useGetBrands({
+    const { categorys, categorysLoading, categorysEmpty } = useGetCategorys({
         page: table.page,
         rowsPerPage: table.rowsPerPage,
     })
@@ -88,11 +91,12 @@ export default function BrandListView() {
     const { enqueueSnackbar } = useSnackbar()
 
     useEffect(() => {
-        if (brands.length) {
-            setTableData(brands)
+        if (categorys.length) {
+            setTableData(categorys)
         }
-    }, [brands])
-    console.log(brands)
+    }, [categorys])
+
+    console.log(categorys)
 
     const dataFiltered = applyFilter({
         inputData: tableData,
@@ -109,10 +113,10 @@ export default function BrandListView() {
 
     const canReset = !isEqual(defaultFilters, filters)
 
-    const notFound = (!dataFiltered.length && canReset) || brandsEmpty
+    const notFound = (!dataFiltered.length && canReset) || categorysEmpty
 
     const handleFilters = useCallback(
-        (name: string, value: IBrandTableFilterValue) => {
+        (name: string, value: ICategoryTableFilterValue) => {
             table.onResetPage()
             setFilters((prevState) => ({
                 ...prevState,
@@ -127,7 +131,7 @@ export default function BrandListView() {
             const deleteRow = tableData.filter((row) => row.id !== id)
             setTableData(deleteRow)
             table.onUpdatePageDeleteRow(dataInPage.length)
-            await deleteBrand(id)
+            await deleteCategory(id)
             enqueueSnackbar('Delete success!')
         } catch (e) {
             console.log(e)
@@ -151,7 +155,7 @@ export default function BrandListView() {
 
     const handleEditRow = useCallback(
         (id: string) => {
-            router.push(paths.dashboard.brand.edit(id))
+            router.push(paths.dashboard.category.edit(id))
         },
         [router]
     )
@@ -168,33 +172,33 @@ export default function BrandListView() {
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
                         {
-                            name: 'Brand',
-                            href: paths.dashboard.brand.root,
+                            name: 'category',
+                            href: paths.dashboard.category.root,
                         },
                         { name: 'List' },
                     ]}
                     action={
                         <Button
                             component={RouterLink}
-                            href={paths.dashboard.brand.new}
+                            href={paths.dashboard.category.new}
                             variant="contained"
                             startIcon={<Iconify icon="mingcute:add-line" />}
                         >
-                            New Brand
+                            New Category
                         </Button>
                     }
                     sx={{ mb: { xs: 3, md: 5 } }}
                 />
 
                 <Card>
-                    <BrandTableToolbar
+                    <CategoryTableToolbar
                         filters={filters}
                         onFilters={handleFilters}
                         statusOptions={STATUS_OPTIONS}
                     />
 
                     {canReset && (
-                        <BrandTableFiltersResult
+                        <CategoryTableFiltersResult
                             filters={filters}
                             onFilters={handleFilters}
                             //
@@ -251,7 +255,7 @@ export default function BrandListView() {
                                 />
 
                                 <TableBody>
-                                    {brandsLoading ? (
+                                    {categorysLoading ? (
                                         [...Array(table.rowsPerPage)].map(
                                             (i, index) => (
                                                 <TableSkeleton
@@ -271,7 +275,7 @@ export default function BrandListView() {
                                                         table.rowsPerPage
                                                 )
                                                 .map((row) => (
-                                                    <BrandTableRow
+                                                    <CategoryTableRow
                                                         key={row.id}
                                                         row={row}
                                                         selected={table.selected.includes(
@@ -358,9 +362,9 @@ function applyFilter({
     comparator,
     filters,
 }: {
-    inputData: IBrandItem[]
+    inputData: ICategoryItem[]
     comparator: (a: any, b: any) => number
-    filters: IBrandTableFilters
+    filters: ICategoryTableFilters
 }) {
     const { name } = filters
 

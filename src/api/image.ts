@@ -7,11 +7,14 @@ export const uploadImage = async (file: File) => {
     formData.append('file', file)
     const config = {
         headers: {
-            // Authorization: `Bearer ${ACCESS_TOKEN}`,
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
             'Content-Type': 'multipart/form-data',
         },
     }
     const res = await axios.post(endpoints.image.upload, formData, config)
-    if (res.data.code !== 201) throw new Error('Upload Failed')
+
+    if (res.status !== 200) {
+        throw new Error('Failed to upload image')
+    }
     return res.data ?? 'empty-url'
 }

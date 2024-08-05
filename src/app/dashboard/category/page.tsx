@@ -1,4 +1,4 @@
-import { BrandListView } from 'src/sections/brand/view'
+import { CategoryListView } from 'src/sections/category/view'
 
 // ----------------------------------------------------------------------
 
@@ -6,6 +6,6 @@ export const metadata = {
     title: 'Dashboard: Brand List',
 }
 
-export default function BrandListPage() {
-    return <BrandListView />
+export default function CategoryListPage() {
+    return <CategoryListView />
 }

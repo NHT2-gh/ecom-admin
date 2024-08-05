@@ -4,51 +4,39 @@ import Container from '@mui/material/Container'
 
 import { paths } from 'src/routes/paths'
 
-import { useGetBrand } from 'src/api/brand'
-
 import { useSettingsContext } from 'src/components/settings'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs'
 
-import BrandNewEditForm from '../brand-new-edit-form'
+import CategoryNewEditForm from '../category-new-edit-form'
 
 // ----------------------------------------------------------------------
 
-type Props = {
-    id: string
-}
-
-export default async function BrandEditView({ id }: Props) {
+export default function CategoryCreateView() {
     const settings = useSettingsContext()
-
-    const { brand, error } = useGetBrand(id)
-
-    if (error) {
-        return <div>Error: {error.message}</div>
-    }
-
-    const currentBrand = brand
 
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
             <CustomBreadcrumbs
-                heading="Edit"
+                heading="Create a new Category"
                 links={[
                     {
                         name: 'Dashboard',
                         href: paths.dashboard.root,
                     },
                     {
-                        name: 'Brand',
-                        href: paths.dashboard.brand.root,
+                        name: 'Category',
+                        href: paths.dashboard.category.root,
                     },
-                    { name: currentBrand?.name },
+                    {
+                        name: 'New Category',
+                    },
                 ]}
                 sx={{
                     mb: { xs: 3, md: 5 },
                 }}
             />
 
-            <BrandNewEditForm currentBrand={currentBrand} />
+            <CategoryNewEditForm />
         </Container>
     )
 }

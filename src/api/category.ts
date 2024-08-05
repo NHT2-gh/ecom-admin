@@ -1,13 +1,14 @@
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { IBrandItem } from 'src/types/brand'
+import { ICategoryItem } from 'src/types/categorys'
 import axios, { endpoints, fetcher } from 'src/utils/axios'
 // import { status } from 'nprogress'
 import { ACCESS_TOKEN } from 'src/config-global'
+import { de } from 'date-fns/locale'
 // import { Accordion } from '@mui/material'
 // import { da } from 'date-fns/locale'
 
-interface GetBrandsProps {
+interface GetCategorysProps {
     page: number
     rowsPerPage: number
 }
@@ -15,21 +16,21 @@ interface GetBrandsProps {
 // const STORAGE_KEY = 'accessToken'
 const accessToken = sessionStorage.getItem('accessToken')
 
-export async function createBrand({
+export async function createCategory({
     data,
 }: {
-    data: Omit<IBrandItem, 'id' | 'status' | 'createdAt' | 'updatedAt'>
+    data: Omit<ICategoryItem, 'id' | 'status' | 'createdAt' | 'updatedAt'>
 }) {
     const payload = JSON.stringify({
         name: data.name,
-        image: data.image,
+        description: data.description,
     })
     const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
     }
     try {
-        const res = await axios.post(endpoints.brand.create, payload, {
+        const res = await axios.post(endpoints.category.create, payload, {
             headers,
         })
         if (res?.data.error) {
@@ -43,8 +44,8 @@ export async function createBrand({
 
 //---------------------------------------------------------------------
 
-export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
-    const url = endpoints.brand.list
+export function useGetCategorys({ page, rowsPerPage }: GetCategorysProps) {
+    const url = endpoints.category.list
     const {
         data: response,
         error,
@@ -66,11 +67,11 @@ export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
         }
     )
 
-    const brands: IBrandItem[] = response?.data.data.map(
-        (dataItem: IBrandItem) => ({
+    const Categorys: ICategoryItem[] = response?.data.map(
+        (dataItem: ICategoryItem) => ({
             id: dataItem.id,
             name: dataItem.name,
-            image: dataItem.image,
+            description: dataItem.description,
             createdAt: dataItem.created_at,
             updatedAt: dataItem.updated_at,
             status: dataItem.status,
@@ -79,11 +80,11 @@ export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
 
     const memoizedValue = useMemo(
         () => ({
-            brands: (brands as IBrandItem[]) || [],
-            brandsLoading: isLoading,
-            brandsError: error,
-            brandsValidating: isValidating,
-            brandsEmpty: !false && !brands?.length,
+            categorys: (Categorys as ICategoryItem[]) || [],
+            categorysLoading: isLoading,
+            categorysError: error,
+            categorysValidating: isValidating,
+            categorysEmpty: !false && !Categorys?.length,
         }),
         [response, isLoading, error, isValidating] // eslint-disable-line
     )
@@ -93,15 +94,15 @@ export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
 
 //---------------------------------------------------------------------
 
-export async function updateBrand({
+export async function updateCategory({
     data,
 }: {
-    data: Omit<IBrandItem, 'status' | 'createdAt' | 'updatedAt'>
+    data: Omit<ICategoryItem, 'status' | 'createdAt' | 'updatedAt'>
 }) {
     const payload = JSON.stringify({
         id: data.id,
         name: data?.name,
-        image: data?.image,
+        description: data?.description,
     })
 
     const headers = {
@@ -110,7 +111,7 @@ export async function updateBrand({
     }
     try {
         const res = await axios.patch(
-            `${endpoints.brand.edit}/${data.id}`,
+            `${endpoints.category.edit}/${data.id}`,
             payload,
             {
                 headers,
@@ -128,8 +129,8 @@ export async function updateBrand({
 
 //---------------------------------------------------------------------
 
-export function useGetBrand(id: string) {
-    const url = endpoints.brand.edit
+export function useGetCategory(id: string) {
+    const url = endpoints.category.edit
 
     const { data: res, error } = useSWR(`${url}${id}`, fetcher, {
         onErrorRetry(err, key, config, revalidate, { retryCount }) {
@@ -143,11 +144,11 @@ export function useGetBrand(id: string) {
 
     const data = res?.data
 
-    const brand: IBrandItem | undefined = data
+    const Category: ICategoryItem | undefined = data
         ? {
               id: data?.id,
               name: data?.name,
-              image: data?.image,
+              description: data?.description,
               updatedAt: data?.updated_at,
               createdAt: data?.created_at,
               status: data?.status,
@@ -156,7 +157,7 @@ export function useGetBrand(id: string) {
 
     const memoizedValue = useMemo(
         () => ({
-            brand,
+            Category,
             error,
         }),
         [data, error] // eslint-disable-line
@@ -165,10 +166,8 @@ export function useGetBrand(id: string) {
     return memoizedValue
 }
 
-export async function deleteBrand(id: string) {
-    const url = endpoints.brand.delete
-
-    // console.log('token', ACCESS_TOKEN)
+export async function deleteCategory(id: string) {
+    const url = endpoints.category.delete
 
     const headers = {
         'Content-Type': 'application/json',

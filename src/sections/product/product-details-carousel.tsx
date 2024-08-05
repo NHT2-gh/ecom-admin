@@ -76,9 +76,11 @@ type Props = {
 
 export default function ProductDetailsCarousel({ product }: Props) {
     const theme = useTheme()
-    const slides = product.images?.map((img) => ({
-        src: typeof img === 'string' ? img : '',
-    }))
+    const slides = product.images
+        ? product.images?.map((img) => ({
+              src: typeof img === 'string' ? img : '',
+          }))
+        : []
 
     const lightbox = useLightBox(slides)
 

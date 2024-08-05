@@ -48,5 +48,12 @@ export const endpoints = {
         create: `${VERSION_PREFIX}/brands`,
         list: `${VERSION_PREFIX}/brands`,
         edit: `${VERSION_PREFIX}/brands/`,
+        delete: `${VERSION_PREFIX}/brands/`,
+    },
+    category: {
+        create: `${VERSION_PREFIX}/categories`,
+        list: `${VERSION_PREFIX}/categories`,
+        edit: `${VERSION_PREFIX}/categories/`,
+        delete: `${VERSION_PREFIX}/categories/`,
     },
 }

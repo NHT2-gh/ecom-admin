@@ -4,12 +4,12 @@ import Container from '@mui/material/Container'
 
 import { paths } from 'src/routes/paths'
 
-import { useGetBrand } from 'src/api/brand'
+import { _userList } from 'src/_mock'
 
 import { useSettingsContext } from 'src/components/settings'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs'
-
-import BrandNewEditForm from '../brand-new-edit-form'
+import { useGetCategory } from 'src/api/category'
+import CategoryNewEditForm from '../category-new-edit-form'
 
 // ----------------------------------------------------------------------
 
@@ -17,16 +17,16 @@ type Props = {
     id: string
 }
 
-export default async function BrandEditView({ id }: Props) {
+export default async function CategoryEditView({ id }: Props) {
     const settings = useSettingsContext()
 
-    const { brand, error } = useGetBrand(id)
+    const { Category, error } = useGetCategory(id)
 
     if (error) {
         return <div>Error: {error.message}</div>
     }
 
-    const currentBrand = brand
+    const currentCategory = Category
 
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -38,17 +38,17 @@ export default async function BrandEditView({ id }: Props) {
                         href: paths.dashboard.root,
                     },
                     {
-                        name: 'Brand',
-                        href: paths.dashboard.brand.root,
+                        name: 'Category',
+                        href: paths.dashboard.category.root,
                     },
-                    { name: currentBrand?.name },
+                    { name: currentCategory?.name },
                 ]}
                 sx={{
                     mb: { xs: 3, md: 5 },
                 }}
             />
 
-            <BrandNewEditForm currentBrand={currentBrand} />
+            <CategoryNewEditForm currentCategory={currentCategory} />
         </Container>
     )
 }
