@@ -9,6 +9,21 @@ export const ORDER_STATUS_OPTIONS = [
     { value: 'refunded', label: 'Refunded' },
 ]
 
+export const ORDER_SHIPPING_OPTIONS = [
+    {
+        value: 'standard',
+        label: 'Standard',
+        shippingUnit: 'Giao hàng tiết kiệm',
+        price: 30000,
+    },
+    {
+        value: 'free',
+        label: 'Free',
+        shippingUnit: 'Cửa hàng tự giao',
+        price: 0,
+    },
+]
+
 const ITEMS = [...Array(3)].map((_, index) => ({
     id: _mock.id(index),
     quantity: index + 1,

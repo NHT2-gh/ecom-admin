@@ -76,8 +76,6 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
 
     const values = watch()
 
-    // console.log('id', currentBrand?.id)
-
     const onSubmit = handleSubmit(async ({ name, image }) => {
         try {
             if (currentBrand) {
@@ -128,18 +126,14 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
         [setValue]
     )
 
-    const handleDeleteBrand = (id?: string) => async () => {
-        try {
-            console.log('id', id)
-            if (id) {
-                await deleteBrand(id)
-                enqueueSnackbar('Delete success!')
-                router.push(paths.dashboard.brand.list)
-            }
-        } catch (error) {
-            console.error(error)
-        }
-    }
+    const handleDeleteBrand = useCallback(
+        (id: string) => {
+            deleteBrand(id)
+            router.push(paths.dashboard.brand.list)
+            enqueueSnackbar(currentBrand ? 'Delete success!' : 'Delete Fail!')
+        },
+        [currentBrand, enqueueSnackbar, router]
+    )
 
     return (
         <>
@@ -238,25 +232,26 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
                     </Grid>
                 </Grid>
             </FormProvider>
-
-            <ConfirmDialog
-                open={confirm.value}
-                onClose={confirm.onFalse}
-                title="Delete"
-                content="Are you sure want to delete?"
-                action={
-                    <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => {
-                            handleDeleteBrand(currentBrand?.id)
-                            confirm.onFalse()
-                        }}
-                    >
-                        Delete
-                    </Button>
-                }
-            />
+            {currentBrand && (
+                <ConfirmDialog
+                    open={confirm.value}
+                    onClose={confirm.onFalse}
+                    title="Delete"
+                    content="Are you sure want to delete?"
+                    action={
+                        <Button
+                            variant="contained"
+                            color="error"
+                            onClick={() => {
+                                handleDeleteBrand(currentBrand?.id)
+                                // confirm.onFalse()
+                            }}
+                        >
+                            Delete
+                        </Button>
+                    }
+                />
+            )}
         </>
     )
 }

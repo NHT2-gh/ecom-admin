@@ -1,16 +1,18 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { IProductItem } from 'src/types/product'
 import { _productDetails, _productList } from 'src/_mock'
 import useSWR from 'swr'
 import axios, { endpoints, fetcher } from 'src/utils/axios'
 import { ACCESS_TOKEN } from 'src/config-global'
-import { ca } from 'date-fns/locale'
+import { da } from 'date-fns/locale'
+// import { ca } from 'date-fns/locale'
 
 // ----------------------------------------------------------------------
 interface GetProductsProps {
     page: number
     rowsPerPage: number
 }
+const accessToken = sessionStorage.getItem('accessToken')
 
 export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
     const url = endpoints.product.list
@@ -39,8 +41,9 @@ export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
         (dataItem: IProductItem) => ({
             id: dataItem.id,
             gender: dataItem.gender,
-            publish: dataItem.publish,
+            publish: dataItem.status,
             category: dataItem.category,
+            brand: dataItem.brand,
             available: dataItem.quantity,
             priceSale: dataItem.price,
             quantity: dataItem.quantity,
@@ -61,9 +64,6 @@ export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
             name: dataItem.name,
             price: dataItem.price,
             coverUrl: dataItem.images ? dataItem.images[0] : '',
-            totalRatings: 3.7,
-            totalSold: 684,
-            totalReviews: 9124,
             subDescription: dataItem.description,
             colors: ['#000000', '#FFFFFF'],
         })
@@ -100,14 +100,6 @@ export function useGetProduct(productId: string) {
 
     const data = res?.data
 
-    // const productImages: ImageItem[] = data?.images.map(
-    //     (image: any) =>
-    //         ({
-    //             id: image.id,
-    //             data: image.url,
-    //         }) satisfies ImageItem
-    // )
-
     const product: IProductItem | undefined = data
         ? {
               id: data.id,
@@ -115,20 +107,17 @@ export function useGetProduct(productId: string) {
               code: data.id,
               price: data.price,
               gender: data.gender,
-              // sizes: string[]
-              publish: data.publish,
+              publish: data.status,
               coverUrl: data.images ? data.images[0] : '',
               images: data.images || [],
-              colors: data.colors,
+              colors: [data.colors],
               quantity: data.quantity,
               category: data.category,
+              brand: data.brand,
               available: data.quantity,
               totalSold: data.quantity,
               description: data.description,
-              // totalRatings: number
-              // totalReviews: number
               inventoryType: 'in stock',
-              subDescription: '',
               priceSale: data.salePrice,
               createdAt: data.created_at,
               saleLabel: {
@@ -155,48 +144,31 @@ export function useGetProduct(productId: string) {
     return memoizedValue
 }
 
-export async function createOrUpdateProduct({
-    data,
-    id,
-}: {
-    data: any
-    id?: string
-}) {
+export async function updateProduct(id: string, data: any) {
     const payload = JSON.stringify({
         name: data.name,
-        images: data.images.map((image: any) => image.id),
+        images: data.images.map((image: any) => image),
         gender: data.gender,
         price: `${data.price}`,
         salePrice: `${data.priceSale}`,
-        status: data.status,
-        colors: data.colors,
+        status: data.publish,
+        colors: data.colors[0],
         quantity: `${data.quantity}`,
-        brandId: data.brand.brandId || '0012ef1a-b5b8-4f16-804c-9ecfc112d06b',
-        categoryId:
-            data.category.categoryId || '01911749-2973-7110-b429-0dbd75465881',
+        brandId: data.brand.brandId || '',
+        categoryId: data.category.categoryId || '',
         description: data.description,
     })
 
     const headers = {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        Authorization: `Bearer ${accessToken}`,
     }
     try {
-        if (id) {
-            const res = await axios.put(
-                `${endpoints.product.details}${id}`,
-                payload,
-                { headers }
-            )
-            if (res?.data.error) {
-                throw new Error(`Error: ${res.data.error}`)
-            }
-            return res.data
-        }
-
-        const res = await axios.post(endpoints.product.list, payload, {
-            headers,
-        })
+        const res = await axios.patch(
+            `${endpoints.product.details}${id}`,
+            payload,
+            { headers }
+        )
         if (res?.data.error) {
             throw new Error(`Error: ${res.data.error}`)
         }
@@ -206,11 +178,46 @@ export async function createOrUpdateProduct({
     }
 }
 
+export async function createProduct(data: any) {
+    const payload = JSON.stringify({
+        name: data.name,
+        images: data.images,
+        gender: data.gender[0],
+        price: `${data.price}`,
+        salePrice: `${data.priceSale}`,
+        status: data.status,
+        colors: data.colors[0],
+        quantity: `${data.quantity}`,
+        brandId: data.brand,
+        categoryId: data.category,
+        description: data.description,
+    })
+
+    console.log('payload', payload)
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+    }
+    try {
+        const res = await axios.post(endpoints.product.create, payload, {
+            headers,
+        })
+        if (res?.data.error) {
+            throw new Error(`Error: ${res.data.error}`)
+        }
+
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        throw new Error(`Exception: ${error}`)
+    }
+}
+
 export async function deleteProduct(productId: string) {
     try {
         const headers = {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-            Accept: '*/*',
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
         }
         const res = await axios.delete(
             `${endpoints.product.details}${productId}`,

@@ -71,7 +71,7 @@ export function RHFUpload({ name, multiple, helperText, ...other }: Props) {
                     <Upload
                         multiple
                         accept={{ 'image/*': [] }}
-                        files={field.value.map((file: ImageItem) => file.data)}
+                        files={field.value.map((file: string[]) => file)}
                         error={!!error}
                         helperText={
                             (!!error || helperText) && (

@@ -3,6 +3,7 @@ import { forwardRef, useCallback } from 'react'
 import Stack from '@mui/material/Stack'
 import { alpha } from '@mui/material/styles'
 import ButtonBase from '@mui/material/ButtonBase'
+import { PRODUCT_COLOR_NAME_OPTIONS } from 'src/_mock'
 
 import Iconify from '../iconify'
 import { ColorPickerProps } from './types'

@@ -1,30 +1,30 @@
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { IBrandItem } from 'src/types/brand'
+import { IUserItem } from 'src/types/user'
 import axios, { endpoints, fetcher } from 'src/utils/axios'
 
-interface GetBrandsProps {
+interface GetUsersProps {
     page: number
     rowsPerPage: number
 }
-
 const accessToken = sessionStorage.getItem('accessToken')
 
-export async function createBrand({
-    data,
-}: {
-    data: Omit<IBrandItem, 'id' | 'status' | 'createdAt' | 'updatedAt'>
-}) {
+export async function createUser(data: any, urlAvatar: string) {
     const payload = JSON.stringify({
-        name: data.name,
-        image: data.image,
+        firstName: data.name.split(' ')[0],
+        lastName: data.name.split(' ')[1],
+        phone: data.phone,
+        email: data.email,
+        password: data.password,
+        address: data.address,
+        avatar: urlAvatar,
     })
     const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
     }
     try {
-        const res = await axios.post(endpoints.brand.create, payload, {
+        const res = await axios.post(endpoints.user.create, payload, {
             headers,
         })
         if (res?.data.error) {
@@ -38,15 +38,24 @@ export async function createBrand({
 
 //---------------------------------------------------------------------
 
-export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
-    const url = endpoints.brand.list
+export function useGetUsers({ page, rowsPerPage }: GetUsersProps) {
+    const url = endpoints.user.list
     const {
         data: response,
         error,
         isLoading,
         isValidating,
     } = useSWR(
-        () => [url, { params: { limit: rowsPerPage * (page + 2) } }],
+        () => [
+            url,
+            {
+                params: { limit: rowsPerPage * (page + 2) },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            },
+        ],
         fetcher,
         {
             revalidateOnFocus: false,
@@ -61,24 +70,27 @@ export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
         }
     )
 
-    const brands: IBrandItem[] = response?.data.data.map(
-        (dataItem: IBrandItem) => ({
+    const user: IUserItem[] = response?.data.data.map(
+        (dataItem: IUserItem) => ({
             id: dataItem.id,
-            name: dataItem.name,
-            image: dataItem.image,
-            createdAt: dataItem.created_at,
-            updatedAt: dataItem.updated_at,
+            name: `${dataItem.firstName} ${dataItem.lastName}`,
+            phone: dataItem.phone,
+            role: dataItem.role,
+            email: dataItem.email,
+            avatar: dataItem.avatar,
+            createdAt: dataItem.createdAt,
+            updatedAt: dataItem.updatedAt,
             status: dataItem.status,
         })
     )
 
     const memoizedValue = useMemo(
         () => ({
-            brands: (brands as IBrandItem[]) || [],
-            brandsLoading: isLoading,
-            brandsError: error,
-            brandsValidating: isValidating,
-            brandsEmpty: !false && !brands?.length,
+            users: (user as IUserItem[]) || [],
+            usersLoading: isLoading,
+            usersError: error,
+            usersValidating: isValidating,
+            usersEmpty: !false && !user?.length,
         }),
         [response, isLoading, error, isValidating] // eslint-disable-line
     )
@@ -88,15 +100,16 @@ export function useGetBrands({ page, rowsPerPage }: GetBrandsProps) {
 
 //---------------------------------------------------------------------
 
-export async function updateBrand({
-    data,
-}: {
-    data: Omit<IBrandItem, 'status' | 'createdAt' | 'updatedAt'>
-}) {
+export async function updateUser(id: string, data: any, avatarUrl?: string) {
     const payload = JSON.stringify({
-        id: data.id,
-        name: data?.name,
-        image: data?.image,
+        firstName: data.name.split(' ')[0],
+        lastName: data.name.split(' ')[1],
+        status: data.status,
+        address: data.address,
+        email: data.email,
+        avatar: avatarUrl ? `${avatarUrl}` : data.avatarUrl,
+        phone: data.phone,
+        role: data.role,
     })
 
     const headers = {
@@ -105,7 +118,7 @@ export async function updateBrand({
     }
     try {
         const res = await axios.patch(
-            `${endpoints.brand.edit}/${data.id}`,
+            `${endpoints.user.update}/${id}`,
             payload,
             {
                 headers,
@@ -123,8 +136,8 @@ export async function updateBrand({
 
 //---------------------------------------------------------------------
 
-export function useGetBrand(id: string) {
-    const url = endpoints.brand.edit
+export function useGetUser(id: string) {
+    const url = endpoints.user.details
 
     const { data: res, error } = useSWR(`${url}${id}`, fetcher, {
         onErrorRetry(err, key, config, revalidate, { retryCount }) {
@@ -138,20 +151,27 @@ export function useGetBrand(id: string) {
 
     const data = res?.data
 
-    const brand: IBrandItem | undefined = data
+    const user: IUserItem | undefined = data
         ? {
-              id: data?.id,
-              name: data?.name,
-              image: data?.image,
-              updatedAt: data?.updated_at,
-              createdAt: data?.created_at,
-              status: data?.status,
+              id: data.id,
+              name: `${data.firstName} ${data.lastName}`,
+              phone: data.phone,
+              address: data.address,
+              gender: data.gender,
+              birthday: data.birthday,
+              role: data.role,
+              email: data.email,
+              avatar: data.avatar,
+              updatedAt: data.updated_at,
+              createdAt: data.created_at,
+              status: data.status,
+              password: data.password,
           }
         : undefined
 
     const memoizedValue = useMemo(
         () => ({
-            brand,
+            user,
             error,
         }),
         [data, error] // eslint-disable-line
@@ -160,10 +180,8 @@ export function useGetBrand(id: string) {
     return memoizedValue
 }
 
-export async function deleteBrand(id: string) {
-    const url = endpoints.brand.delete
-
-    // console.log('token', ACCESS_TOKEN)
+export async function deleteUser(id: string) {
+    const url = endpoints.user.delete
 
     const headers = {
         'Content-Type': 'application/json',
@@ -177,6 +195,7 @@ export async function deleteBrand(id: string) {
             throw new Error(`Error: ${res.data.error}`)
         }
         return res.data
+        console.log('res', res.data)
     } catch (error) {
         throw new Error(`Exception: ${error}`)
     }

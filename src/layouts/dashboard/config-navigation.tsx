@@ -21,9 +21,11 @@ const ICONS = {
     blog: icon('ic_blog'),
     user: icon('ic_user'),
     order: icon('ic_order'),
-    product: icon('ic_product'),
+    product: icon('ic_heart'),
     invoice: icon('ic_invoice'),
     ecommerce: icon('ic_ecommerce'),
+    brand: icon('ic_brand'),
+    category: icon('ic_category'),
 }
 
 // ----------------------------------------------------------------------
@@ -59,14 +61,6 @@ export function useNavData() {
                                 title: 'list',
                                 path: paths.dashboard.user.list,
                             },
-                            {
-                                title: 'create',
-                                path: paths.dashboard.user.new,
-                            },
-                            {
-                                title: 'edit',
-                                path: paths.dashboard.user.demo.edit,
-                            },
                         ],
                     },
 
@@ -79,18 +73,6 @@ export function useNavData() {
                             {
                                 title: 'list',
                                 path: paths.dashboard.product.root,
-                            },
-                            {
-                                title: 'details',
-                                path: paths.dashboard.product.demo.details,
-                            },
-                            {
-                                title: 'create',
-                                path: paths.dashboard.product.new,
-                            },
-                            {
-                                title: 'edit',
-                                path: paths.dashboard.product.demo.edit,
                             },
                         ],
                     },
@@ -105,10 +87,6 @@ export function useNavData() {
                                 title: 'list',
                                 path: paths.dashboard.order.root,
                             },
-                            {
-                                title: 'details',
-                                path: paths.dashboard.order.demo.details,
-                            },
                         ],
                     },
 
@@ -116,7 +94,7 @@ export function useNavData() {
                     {
                         title: 'brand',
                         path: paths.dashboard.brand.root,
-                        icon: ICONS.order,
+                        icon: ICONS.brand,
                         children: [
                             {
                                 title: 'list',
@@ -129,7 +107,7 @@ export function useNavData() {
                     {
                         title: 'category',
                         path: paths.dashboard.category.root,
-                        icon: ICONS.order,
+                        icon: ICONS.category,
                         children: [
                             {
                                 title: 'list',

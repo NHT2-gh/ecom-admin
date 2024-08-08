@@ -4,11 +4,11 @@ import Container from '@mui/material/Container'
 
 import { paths } from 'src/routes/paths'
 
-import { _userList } from 'src/_mock'
-
 import { useSettingsContext } from 'src/components/settings'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs'
+
 import { useGetCategory } from 'src/api/category'
+
 import CategoryNewEditForm from '../category-new-edit-form'
 
 // ----------------------------------------------------------------------
@@ -21,6 +21,10 @@ export default async function CategoryEditView({ id }: Props) {
     const settings = useSettingsContext()
 
     const { Category, error } = useGetCategory(id)
+
+    if (Category?.id === undefined) {
+        return <div>Loading...</div>
+    }
 
     if (error) {
         return <div>Error: {error.message}</div>

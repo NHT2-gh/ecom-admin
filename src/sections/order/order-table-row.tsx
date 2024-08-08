@@ -44,11 +44,12 @@ export default function OrderTableRow({
     const {
         items,
         status,
-        orderNumber,
+        id,
         createdAt,
-        customer,
-        totalQuantity,
-        subTotal,
+        recipientName,
+        recipientEmail,
+        totalAmount,
+        totalItem,
     } = row
 
     const confirm = useBoolean()
@@ -73,20 +74,14 @@ export default function OrderTableRow({
                         },
                     }}
                 >
-                    {orderNumber}
+                    {id.split('-')[4]}
                 </Box>
             </TableCell>
 
             <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar
-                    alt={customer.name}
-                    src={customer.avatarUrl}
-                    sx={{ mr: 2 }}
-                />
-
                 <ListItemText
-                    primary={customer.name}
-                    secondary={customer.email}
+                    primary={recipientName}
+                    secondary={recipientEmail}
                     primaryTypographyProps={{ typography: 'body2' }}
                     secondaryTypographyProps={{
                         component: 'span',
@@ -111,9 +106,9 @@ export default function OrderTableRow({
                 />
             </TableCell>
 
-            <TableCell align="center"> {totalQuantity} </TableCell>
+            <TableCell align="center"> {totalItem} </TableCell>
 
-            <TableCell> {fCurrency(subTotal)} </TableCell>
+            <TableCell> {fCurrency(totalAmount)} </TableCell>
 
             <TableCell>
                 <Label
@@ -177,7 +172,7 @@ export default function OrderTableRow({
                                 }}
                             >
                                 <Avatar
-                                    src={item.coverUrl}
+                                    src={item.image}
                                     variant="rounded"
                                     sx={{ width: 48, height: 48, mr: 2 }}
                                 />
@@ -219,17 +214,6 @@ export default function OrderTableRow({
                 arrow="right-top"
                 sx={{ width: 140 }}
             >
-                <MenuItem
-                    onClick={() => {
-                        confirm.onTrue()
-                        popover.onClose()
-                    }}
-                    sx={{ color: 'error.main' }}
-                >
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                    Delete
-                </MenuItem>
-
                 <MenuItem
                     onClick={() => {
                         onViewRow()

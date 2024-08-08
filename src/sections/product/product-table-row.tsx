@@ -48,6 +48,7 @@ export default function ProductTableRow({
         publish,
         coverUrl,
         category,
+        brand,
         quantity,
         createdAt,
         available,
@@ -57,6 +58,9 @@ export default function ProductTableRow({
     const confirm = useBoolean()
 
     const popover = usePopover()
+
+    const capitalizeFirstLetter = (string: string) =>
+        string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
 
     return (
         <>
@@ -94,7 +98,7 @@ export default function ProductTableRow({
                                     color: 'text.disabled',
                                 }}
                             >
-                                {category && category.name}
+                                {`${category && capitalizeFirstLetter(category.name)} ${brand && capitalizeFirstLetter(brand.name)}`}
                             </Box>
                         }
                     />
@@ -137,7 +141,11 @@ export default function ProductTableRow({
                 <TableCell>
                     <Label
                         variant="soft"
-                        color={(publish === 'published' && 'info') || 'default'}
+                        color={
+                            (publish === 'active' && 'success') ||
+                            (publish === 'deleted' && 'error') ||
+                            'default'
+                        }
                     >
                         {publish}
                     </Label>

@@ -60,8 +60,8 @@ const TABLE_HEAD = [
 ]
 
 const PUBLISH_OPTIONS = [
-    { value: 'published', label: 'Published' },
-    { value: 'draft', label: 'Draft' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
 ]
 
 const defaultFilters: IProductTableFilters = {

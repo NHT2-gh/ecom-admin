@@ -4,7 +4,7 @@ import Container from '@mui/material/Container'
 
 import { paths } from 'src/routes/paths'
 
-import { _userList } from 'src/_mock'
+import { useGetUser } from 'src/api/user'
 
 import { useSettingsContext } from 'src/components/settings'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs'
@@ -20,7 +20,17 @@ type Props = {
 export default function UserEditView({ id }: Props) {
     const settings = useSettingsContext()
 
-    const currentUser = _userList.find((user) => user.id === id)
+    const { user, error } = useGetUser(id)
+
+    if (user?.id === undefined) {
+        return <div>Loading...</div>
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>
+    }
+
+    const currentUser = user
 
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -32,8 +42,8 @@ export default function UserEditView({ id }: Props) {
                         href: paths.dashboard.root,
                     },
                     {
-                        name: 'User',
-                        href: paths.dashboard.user.root,
+                        name: 'Users',
+                        href: paths.dashboard.user.list,
                     },
                     { name: currentUser?.name },
                 ]}

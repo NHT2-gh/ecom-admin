@@ -1,7 +1,7 @@
 import * as Yup from 'yup'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useMemo, useEffect, useCallback } from 'react'
+import { useMemo, useEffect, useCallback, useState } from 'react'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -15,20 +15,18 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import FormControlLabel from '@mui/material/FormControlLabel'
 
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+
 import { paths } from 'src/routes/paths'
 import { useRouter } from 'src/routes/hooks'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
-import {
-    PRODUCT_GENDER_OPTIONS,
-    PRODUCT_COLOR_NAME_OPTIONS,
-    PRODUCT_CATEGORY_GROUP_OPTIONS,
-} from 'src/_mock'
+import { PRODUCT_GENDER_OPTIONS, PRODUCT_COLOR_NAME_OPTIONS } from 'src/_mock'
 
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, {
-    RHFSelect,
     RHFEditor,
     RHFUpload,
     RHFSwitch,
@@ -38,9 +36,14 @@ import FormProvider, {
 } from 'src/components/hook-form'
 
 import { IProductItem } from 'src/types/product'
-import { createOrUpdateProduct } from 'src/api/product'
-// import { ImageItem } from 'src/types/image'
+
+import { createProduct, updateProduct } from 'src/api/product'
+
 import { uploadImage } from 'src/api/image'
+
+import { useGetCategorys } from 'src/api/category'
+
+import { useGetBrands } from 'src/api/brand'
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +53,16 @@ type Props = {
 
 export default function ProductNewEditForm({ currentProduct }: Props) {
     const router = useRouter()
+
+    const { categorys } = useGetCategorys({
+        page: 1,
+        rowsPerPage: 100,
+    })
+
+    const { brands } = useGetBrands({
+        page: 1,
+        rowsPerPage: 100,
+    })
 
     const mdUp = useResponsive('up', 'md')
 
@@ -61,6 +74,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
         category: Yup.string().required('Category is required'),
         price: Yup.number().moreThan(0, 'Price should not be $0.00'),
         description: Yup.string().required('Description is required'),
+        brand: Yup.string().required('Brand is required'),
         // not required
         newLabel: Yup.object().shape({
             enabled: Yup.boolean(),
@@ -70,25 +84,22 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             enabled: Yup.boolean(),
             content: Yup.string(),
         }),
+        publish: Yup.string(),
     })
 
     const defaultValues = useMemo(
         () => ({
             name: currentProduct?.name || '',
             description: currentProduct?.description || '',
-            // subDescription: currentProduct?.subDescription || '',
             images: currentProduct?.images || [],
-            //
-            code: currentProduct?.code || '',
             price: currentProduct?.price || 0,
             quantity: currentProduct?.quantity || 0,
+            publish: currentProduct?.publish || '',
             priceSale: currentProduct?.priceSale || 0,
             gender: currentProduct?.gender || '',
-            category:
-                currentProduct?.category.name ||
-                PRODUCT_CATEGORY_GROUP_OPTIONS[0].classify[0],
+            category: currentProduct?.category?.id || '',
             colors: currentProduct?.colors || [],
-            // sizes: currentProduct?.sizes || [],
+            brand: currentProduct?.brand?.id || '',
             newLabel: currentProduct?.newLabel || {
                 enabled: false,
                 content: '',
@@ -112,6 +123,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
         watch,
         setValue,
         handleSubmit,
+        control,
         formState: { isSubmitting },
     } = methods
 
@@ -123,21 +135,24 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
         }
     }, [currentProduct, defaultValues, reset])
 
+    console.log('values', values.publish)
+
     const onSubmit = handleSubmit(async (data) => {
-        const files = values.images
-        const isNotUploadImage = files?.some((e: any) => e.id === '')
-        if (isNotUploadImage) {
-            setError('images', { message: 'all image must be uploaded first' })
-            return
-        }
         try {
-            await createOrUpdateProduct({ data, id: currentProduct?.id })
+            if (currentProduct) {
+                console.log('data update', data)
+                await updateProduct(currentProduct.id, data)
+            } else {
+                await createProduct(data)
+            }
+
             reset()
             enqueueSnackbar(
                 currentProduct ? 'Update success!' : 'Create success!'
             )
             router.push(paths.dashboard.product.root)
         } catch (error) {
+            console.log('error', error)
             enqueueSnackbar(
                 currentProduct ? 'Update failed!' : 'Create failed!',
                 { variant: 'error' }
@@ -152,21 +167,26 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             await Promise.all(
                 files.map(async (file, index) => {
                     if (typeof file !== 'string') {
-                        const imageId = await uploadImage(file)
-                        files[index] = imageId
+                        const imageUrl = await uploadImage(file)
+
+                        files[index] = imageUrl
                     }
                 })
             )
             setValue('images', files)
+            enqueueSnackbar(
+                files.length !== 0 ? 'Upload success!' : 'Upload failed!'
+            )
         } catch (error) {
+            enqueueSnackbar('Upload failed!')
+
             throw new Error(`thowo ${JSON.stringify(error)}`)
         }
-    }, [setValue, values.images])
+    }, [setValue, values.images, enqueueSnackbar])
 
     const handleDrop = useCallback(
         (acceptedFiles: File[]) => {
             const files = values.images || []
-            // console.log('files', acceptedFiles)
 
             const newFiles = acceptedFiles.map((file) =>
                 Object.assign(file, {
@@ -218,13 +238,6 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                     <Stack spacing={3} sx={{ p: 3 }}>
                         <RHFTextField name="name" label="Product Name" />
 
-                        <RHFTextField
-                            name="subDescription"
-                            label="Sub Description"
-                            multiline
-                            rows={4}
-                        />
-
                         <Stack spacing={1.5}>
                             <Typography variant="subtitle2">Content</Typography>
                             <RHFEditor simple name="description" />
@@ -240,7 +253,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                 onDrop={handleDrop}
                                 onRemove={handleRemoveFile}
                                 onRemoveAll={handleRemoveAllFiles}
-                                onUpload={() => console.info('ON UPLOAD')}
+                                onUpload={handleUploadImage}
                             />
                         </Stack>
                     </Stack>
@@ -279,8 +292,6 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                 md: 'repeat(2, 1fr)',
                             }}
                         >
-                            <RHFTextField name="code" label="Product Code" />
-
                             <RHFTextField
                                 name="quantity"
                                 label="Quantity"
@@ -289,32 +300,34 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                 InputLabelProps={{ shrink: true }}
                             />
 
-                            <RHFSelect
-                                native
+                            <Controller
                                 name="category"
-                                label="Category"
-                                InputLabelProps={{ shrink: true }}
-                            >
-                                {PRODUCT_CATEGORY_GROUP_OPTIONS.map(
-                                    (category) => (
-                                        <optgroup
-                                            key={category.group}
-                                            label={category.group}
-                                        >
-                                            {category.classify.map(
-                                                (classify) => (
-                                                    <option
-                                                        key={classify}
-                                                        value={classify}
-                                                    >
-                                                        {classify}
-                                                    </option>
-                                                )
-                                            )}
-                                        </optgroup>
-                                    )
+                                control={control}
+                                defaultValue={
+                                    currentProduct?.category?.id || ''
+                                }
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        select
+                                        label="Category"
+                                        fullWidth
+                                        InputLabelProps={{ shrink: true }}
+                                    >
+                                        <MenuItem value="">
+                                            <em>None</em>
+                                        </MenuItem>
+                                        {categorys.map((category) => (
+                                            <MenuItem
+                                                key={category.id}
+                                                value={category.id}
+                                            >
+                                                {category.name}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
                                 )}
-                            </RHFSelect>
+                            />
 
                             <RHFMultiSelect
                                 checkbox
@@ -323,12 +336,32 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                 options={PRODUCT_COLOR_NAME_OPTIONS}
                             />
 
-                            {/* <RHFMultiSelect
-                                checkbox
-                                name="sizes"
-                                label="Sizes"
-                                options={PRODUCT_SIZE_OPTIONS}
-                            />  */}
+                            <Controller
+                                name="brand"
+                                control={control}
+                                defaultValue={currentProduct?.brand?.id || ''}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        select
+                                        label="Brand"
+                                        fullWidth
+                                        InputLabelProps={{ shrink: true }}
+                                    >
+                                        <MenuItem value="">
+                                            <em>None</em>
+                                        </MenuItem>
+                                        {brands.map((brand) => (
+                                            <MenuItem
+                                                key={brand.id}
+                                                value={brand.id}
+                                            >
+                                                {brand.name}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                )}
+                            />
                         </Box>
 
                         <Stack spacing={1}>
@@ -447,8 +480,26 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             {mdUp && <Grid md={4} />}
             <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
                 <FormControlLabel
-                    control={<Switch defaultChecked />}
-                    label="Publish"
+                    control={
+                        <Controller
+                            name="publish"
+                            control={control}
+                            render={({ field }) => (
+                                <Switch
+                                    {...field}
+                                    checked={field.value !== 'inactive'}
+                                    onChange={(event) =>
+                                        field.onChange(
+                                            event.target.checked
+                                                ? 'active'
+                                                : 'inactive'
+                                        )
+                                    }
+                                />
+                            )}
+                        />
+                    }
+                    label={values.publish === 'active' ? 'Active' : 'Inactive'}
                     sx={{ flexGrow: 1, pl: 3 }}
                 />
 

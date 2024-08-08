@@ -83,7 +83,7 @@ export default function OrderDetailsItems({
                             }}
                         >
                             <Avatar
-                                src={item.coverUrl}
+                                src={item.image}
                                 variant="rounded"
                                 sx={{ width: 48, height: 48, mr: 2 }}
                             />

@@ -94,13 +94,6 @@ export default function OrderDetailsToolbar({
                     >
                         {status}
                     </Button>
-                    <Button
-                        color="inherit"
-                        variant="contained"
-                        startIcon={<Iconify icon="solar:pen-bold" />}
-                    >
-                        Edit
-                    </Button>
                 </Stack>
             </Stack>
 

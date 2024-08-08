@@ -40,7 +40,6 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
         priceSale,
         saleLabel,
         inventoryType,
-        subDescription,
     } = product
 
     const defaultValues = {
@@ -49,7 +48,7 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
         coverUrl,
         available,
         price,
-        // colors:colors?  colors[0] :[],
+        colors: colors ? colors[0] : [],
         quantity: available < 1 ? 0 : 1,
     }
 
@@ -87,28 +86,28 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
         </Box>
     )
 
-    // const renderColorOptions = (
-    //     <Stack direction="row">
-    //         <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-    //             Color
-    //         </Typography>
+    const renderColorOptions = (
+        <Stack direction="row">
+            <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+                Color
+            </Typography>
 
-    //         <Controller
-    //             name="colors"
-    //             control={control}
-    //             render={({ field }) => (
-    //                 <ColorPicker
-    //                     colors={colors}
-    //                     selected={field.value}
-    //                     onSelectColor={(color) =>
-    //                         field.onChange(color as string)
-    //                     }
-    //                     limit={4}
-    //                 />
-    //             )}
-    //         />
-    //     </Stack>
-    // )
+            <Controller
+                name="colors"
+                control={control}
+                render={({ field }) => (
+                    <Box
+                        sx={{
+                            width: '25px',
+                            height: '25px',
+                            borderRadius: '8px',
+                            bgcolor: field.value,
+                        }}
+                    />
+                )}
+            />
+        </Stack>
+    )
 
     const renderQuantity = (
         <Stack direction="row">
@@ -163,31 +162,6 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
         </Stack>
     )
 
-    const renderSubDescription = (
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {subDescription}
-        </Typography>
-    )
-
-    const renderRating = (
-        <Stack
-            direction="row"
-            alignItems="center"
-            sx={{
-                color: 'text.disabled',
-                typography: 'body2',
-            }}
-        >
-            <Rating
-                size="small"
-                value={5}
-                precision={0.1}
-                readOnly
-                sx={{ mr: 1 }}
-            />
-        </Stack>
-    )
-
     const renderLabels = (newLabel.enabled || saleLabel.enabled) && (
         <Stack direction="row" alignItems="center" spacing={1}>
             {newLabel.enabled && <Label color="info">{newLabel.content}</Label>}
@@ -221,17 +195,11 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
                     {renderInventoryType}
 
                     <Typography variant="h5">{name}</Typography>
-
-                    {renderRating}
-
-                    {renderPrice}
-
-                    {renderSubDescription}
                 </Stack>
 
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
-                {/* {renderColorOptions} */}
+                {renderColorOptions}
 
                 {renderQuantity}
 

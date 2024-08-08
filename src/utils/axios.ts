@@ -1,6 +1,9 @@
 import axios, { AxiosRequestConfig } from 'axios'
+import { de } from 'date-fns/locale'
+import { create } from 'lodash'
 
 import { HOST_API } from 'src/config-global'
+import { list } from 'src/theme/overrides/components/list'
 
 // ----------------------------------------------------------------------
 
@@ -31,12 +34,12 @@ const VERSION_PREFIX = '/v1'
 
 export const endpoints = {
     auth: {
-        me: '',
+        me: `${VERSION_PREFIX}/profile`,
         login: `${VERSION_PREFIX}/login`,
-        register: '',
-        forgotPassword: '',
+        forgotPassword: `${VERSION_PREFIX}/profile`,
     },
     product: {
+        create: `${VERSION_PREFIX}/products`,
         list: `${VERSION_PREFIX}/products`,
         details: `${VERSION_PREFIX}/products/`,
         search: '',
@@ -55,5 +58,18 @@ export const endpoints = {
         list: `${VERSION_PREFIX}/categories`,
         edit: `${VERSION_PREFIX}/categories/`,
         delete: `${VERSION_PREFIX}/categories/`,
+    },
+    order: {
+        create: `${VERSION_PREFIX}/carts/make-order`,
+        list: `${VERSION_PREFIX}/orders`,
+        update: `${VERSION_PREFIX}/orders`,
+        details: `${VERSION_PREFIX}/orders/`,
+    },
+    user: {
+        create: `${VERSION_PREFIX}/users`,
+        list: `${VERSION_PREFIX}/users`,
+        update: `${VERSION_PREFIX}/users`,
+        details: `${VERSION_PREFIX}/users/`,
+        delete: `${VERSION_PREFIX}/users/`,
     },
 }

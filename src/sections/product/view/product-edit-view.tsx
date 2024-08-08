@@ -21,6 +21,7 @@ export default function ProductEditView({ id }: Props) {
     const settings = useSettingsContext()
 
     const { product } = useGetProduct(id)
+    console.log(product)
 
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>

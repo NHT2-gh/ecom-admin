@@ -34,19 +34,18 @@ import ProductDetailsDescription from '../product-details-description'
 
 const SUMMARY = [
     {
-        title: '100% Original',
-        description:
-            'Chocolate bar candy canes ice cream toffee cookie halvah.',
+        title: '100% Authentic',
+        description: 'Watches sourced directly from the manufacturer.',
         icon: 'solar:verified-check-bold',
     },
     {
-        title: '10 Day Replacement',
-        description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
+        title: '10-Day Replacement',
+        description: 'Hassle-free returns within 10 days of purchase.',
         icon: 'solar:clock-circle-bold',
     },
     {
-        title: 'Year Warranty',
-        description: 'Cotton candy gingerbread cake I love sugar sweet.',
+        title: '1-Year Warranty',
+        description: 'Enjoy a one-year warranty on all our watches.',
         icon: 'solar:shield-check-bold',
     },
 ]
@@ -105,7 +104,7 @@ export default function ProductDetailsView({ id }: Props) {
                 backLink={paths.dashboard.product.root}
                 editLink={paths.dashboard.product.edit(`${product.id}`)}
                 liveLink=""
-                publish={publish || ''}
+                publish={product.publish || ''}
                 onChangePublish={handleChangePublish}
                 publishOptions={PRODUCT_PUBLISH_OPTIONS}
             />

@@ -10,47 +10,47 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 
 import Iconify from 'src/components/iconify'
-
-import {
-    IOrderPayment,
-    IOrderCustomer,
-    IOrderDelivery,
-    IOrderShippingAddress,
-} from 'src/types/order'
+import { ORDER_SHIPPING_OPTIONS } from 'src/_mock'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-    customer: IOrderCustomer
-    delivery: IOrderDelivery
-    payment: IOrderPayment
-    shippingAddress: IOrderShippingAddress
+    customerPhone: string
+    customerEmail: string
+    customerName: string
+    delivery: string
+    payment: string
+    shippingAddress: string
+    trackingNumber: string
 }
 
 export default function OrderDetailsInfo({
-    customer,
+    customerPhone,
+    customerEmail,
+    customerName,
     delivery,
     payment,
+    trackingNumber,
     shippingAddress,
 }: Props) {
     const renderCustomer = (
         <>
             <CardHeader title="Customer Info" />
             <Stack direction="row" sx={{ p: 3 }}>
-                <Avatar
-                    alt={customer.name}
+                {/* <Avatar
+                    alt={customerName}
                     src={customer.avatarUrl}
                     sx={{ width: 48, height: 48, mr: 2 }}
-                />
+                /> */}
 
                 <Stack
                     spacing={0.5}
                     alignItems="flex-start"
                     sx={{ typography: 'body2' }}
                 >
-                    <Typography variant="subtitle2">{customer.name}</Typography>
+                    <Typography variant="subtitle2">{customerName}</Typography>
 
-                    <Box sx={{ color: 'text.secondary' }}>{customer.email}</Box>
+                    <Box sx={{ color: 'text.secondary' }}>{customerEmail}</Box>
                 </Stack>
             </Stack>
         </>
@@ -71,7 +71,9 @@ export default function OrderDetailsInfo({
                     >
                         Ship by
                     </Box>
-                    {delivery.shipBy}
+                    {delivery && delivery === 'standard'
+                        ? `${ORDER_SHIPPING_OPTIONS[0].shippingUnit}`
+                        : `${ORDER_SHIPPING_OPTIONS[1].shippingUnit}`}
                 </Stack>
                 <Stack direction="row" alignItems="center">
                     <Box
@@ -84,7 +86,7 @@ export default function OrderDetailsInfo({
                     >
                         Speedy
                     </Box>
-                    {delivery.speedy}
+                    {delivery}
                 </Stack>
                 <Stack direction="row" alignItems="center">
                     <Box
@@ -98,7 +100,7 @@ export default function OrderDetailsInfo({
                         Tracking No.
                     </Box>
                     <Link underline="always" color="inherit">
-                        {delivery.trackingNumber}
+                        {trackingNumber}
                     </Link>
                 </Stack>
             </Stack>
@@ -120,7 +122,7 @@ export default function OrderDetailsInfo({
                     >
                         Address
                     </Box>
-                    {shippingAddress.fullAddress}
+                    {shippingAddress}
                 </Stack>
 
                 <Stack direction="row">
@@ -134,32 +136,32 @@ export default function OrderDetailsInfo({
                     >
                         Phone number
                     </Box>
-                    {shippingAddress.phoneNumber}
+                    {customerPhone}
                 </Stack>
             </Stack>
         </>
     )
 
-    const renderPayment = (
-        <>
-            <CardHeader title="Payment" />
-            <Stack
-                direction="row"
-                alignItems="center"
-                sx={{ p: 3, typography: 'body2' }}
-            >
-                <Box
-                    component="span"
-                    sx={{ color: 'text.secondary', flexGrow: 1 }}
-                >
-                    Phone number
-                </Box>
+    // const renderPayment = (
+    //     <>
+    //         <CardHeader title="Payment" />
+    //         <Stack
+    //             direction="row"
+    //             alignItems="center"
+    //             sx={{ p: 3, typography: 'body2' }}
+    //         >
+    //             <Box
+    //                 component="span"
+    //                 sx={{ color: 'text.secondary', flexGrow: 1 }}
+    //             >
+    //                 Phone number
+    //             </Box>
 
-                {payment.cardNumber}
-                <Iconify icon="logos:mastercard" width={24} sx={{ ml: 0.5 }} />
-            </Stack>
-        </>
-    )
+    //             {payment.cardNumber}
+    //             <Iconify icon="logos:mastercard" width={24} sx={{ ml: 0.5 }} />
+    //         </Stack>
+    //     </>
+    // )
 
     return (
         <Card>
@@ -175,7 +177,7 @@ export default function OrderDetailsInfo({
 
             <Divider sx={{ borderStyle: 'dashed' }} />
 
-            {renderPayment}
+            {/* {renderPayment} */}
         </Card>
     )
 }

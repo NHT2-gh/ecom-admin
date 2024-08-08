@@ -4,8 +4,8 @@ import { _mock } from './_mock'
 
 export const USER_STATUS_OPTIONS = [
     { value: 'active', label: 'Active' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'banned', label: 'Banned' },
+    // { value: 'pending', label: 'Pending' },
+    { value: 'inactive', label: 'Inactive' },
 ]
 
 export const _userList = [...Array(20)].map((_, index) => ({

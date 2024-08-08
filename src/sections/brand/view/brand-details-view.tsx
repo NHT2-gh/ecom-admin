@@ -22,10 +22,13 @@ export default async function BrandEditView({ id }: Props) {
 
     const { brand, error } = useGetBrand(id)
 
+    if (brand?.id === undefined) {
+        return <div>Loading...</div>
+    }
+
     if (error) {
         return <div>Error: {error.message}</div>
     }
-
     const currentBrand = brand
 
     return (

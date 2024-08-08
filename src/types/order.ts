@@ -31,27 +31,35 @@ export type IOrderCustomer = {
     id: string
     name: string
     email: string
-    avatarUrl: string
 }
 
 export type IOrderProductItem = {
     id: string
     name: string
     price: number
-    coverUrl: string
+    image: string
     quantity: number
 }
 
 export type IOrderItem = {
     id: string
     status: string
-    shipping: number
-    subTotal: number
-    orderNumber: string
-    totalAmount: number
-    totalQuantity: number
-    customer: IOrderCustomer
-    delivery: IOrderDelivery
-    items: IOrderProductItem[]
+    shippingAddress: string
+    shippingCity: string
+    recipientFirstName?: string
+    recipientLastName?: string
+    recipientName: string
+    recipientEmail: string
+    recipientPhone: string
+    shippingMethod: string
+    paymentMethod: string
+    paymentStatus: string
+    trackingNumber: string
+    created_at?: Date
+    updated_at?: Date
     createdAt: Date
+    updatedAt: Date
+    totalAmount: number
+    totalItem: number
+    items: IOrderProductItem[]
 }

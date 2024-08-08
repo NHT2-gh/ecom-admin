@@ -1,9 +1,11 @@
 // ----------------------------------------------------------------------
 
+import { color } from 'framer-motion'
+
 export const PRODUCT_GENDER_OPTIONS = [
-    { label: 'Men', value: 'Men' },
-    { label: 'Women', value: 'Women' },
-    { label: 'Kids', value: 'Kids' },
+    { label: 'Men', value: 'male' },
+    { label: 'Women', value: 'femail' },
+    { label: 'Unisex', value: 'unisex' },
 ]
 
 export const PRODUCT_CATEGORY_OPTIONS = ['Shose', 'Apparel', 'Accessories']
@@ -27,28 +29,15 @@ export const PRODUCT_COLOR_OPTIONS = [
 ]
 
 export const PRODUCT_COLOR_NAME_OPTIONS = [
-    { value: 'red', label: 'Red' },
-    { value: 'blue', label: 'Blue' },
-    { value: 'cyan', label: 'Cyan' },
-    { value: 'green', label: 'Green' },
-    { value: 'yellow', label: 'Yellow' },
-    { value: 'violet', label: 'Violet' },
-    { value: 'black', label: 'Black' },
-    { value: 'white', label: 'White' },
-]
-
-export const PRODUCT_SIZE_OPTIONS = [
-    { value: '7', label: '7' },
-    { value: '8', label: '8' },
-    { value: '8.5', label: '8.5' },
-    { value: '9', label: '9' },
-    { value: '9.5', label: '9.5' },
-    { value: '10', label: '10' },
-    { value: '10.5', label: '10.5' },
-    { value: '11', label: '11' },
-    { value: '11.5', label: '11.5' },
-    { value: '12', label: '12' },
-    { value: '13', label: '13' },
+    { value: 'red', label: 'Red', color: '#FF4842' },
+    { value: 'blue', label: 'Blue', color: '#1890FF' },
+    { value: 'cyan', label: 'Cyan', color: '#00AB55' },
+    { value: 'green', label: 'Green', color: '#94D82D' },
+    { value: 'yellow', label: 'Yellow', color: '#FFC107' },
+    { value: 'violet', label: 'Violet', color: '#FFC0CB' },
+    { value: 'black', label: 'Black', color: '#000000' },
+    { value: 'white', label: 'White', color: '#FFFFFF' },
+    { value: 'silver', label: 'Silver', color: '#C0C0C0' },
 ]
 
 export const PRODUCT_STOCK_OPTIONS = [
@@ -59,19 +48,12 @@ export const PRODUCT_STOCK_OPTIONS = [
 
 export const PRODUCT_PUBLISH_OPTIONS = [
     {
-        value: 'published',
-        label: 'Published',
+        value: 'active',
+        label: 'Active',
     },
     {
-        value: 'draft',
-        label: 'Draft',
-    },
-]
-
-export const PRODUCT_CATEGORY_GROUP_OPTIONS = [
-    {
-        group: 'Category',
-        classify: ['Nike ABC', 'Adidas ABC', 'Puma ABC', 'Perfume ABC'],
+        value: 'inactive',
+        label: 'Incactive',
     },
 ]
 

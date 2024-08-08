@@ -1,5 +1,7 @@
+'use client'
+
 import * as Yup from 'yup'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
@@ -10,8 +12,6 @@ import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
 
-import { useMockedUser } from 'src/hooks/use-mocked-user'
-
 import { fData } from 'src/utils/format-number'
 
 import { useSnackbar } from 'src/components/snackbar'
@@ -20,12 +20,15 @@ import FormProvider, {
     RHFUploadAvatar,
 } from 'src/components/hook-form'
 
+import { uploadImage } from 'src/api/image'
+import { ViewProfile, updateProfile } from 'src/api/profile'
+
 // ----------------------------------------------------------------------
 
 export default function AccountGeneral() {
     const { enqueueSnackbar } = useSnackbar()
 
-    const { user } = useMockedUser()
+    const { user } = ViewProfile()
 
     const UpdateUserSchema = Yup.object().shape({
         displayName: Yup.string().required('Name is required'),
@@ -35,16 +38,16 @@ export default function AccountGeneral() {
         photoURL: Yup.mixed<any>().nullable().required('Avatar is required'),
         phoneNumber: Yup.string().required('Phone number is required'),
         address: Yup.string().required('Address is required'),
-        about: Yup.string().required('About is required'),
+        // about: Yup.string().required('About is required'),
     })
 
     const defaultValues = {
-        displayName: user?.displayName || '',
+        displayName: user?.name || '',
         email: user?.email || '',
-        photoURL: user?.photoURL || null,
-        phoneNumber: user?.phoneNumber || '',
+        photoURL: user?.avatar || null,
+        phoneNumber: user?.phone || '',
         address: user?.address || '',
-        about: user?.about || '',
+        // about: user?.about || '',
     }
 
     const methods = useForm({
@@ -53,16 +56,43 @@ export default function AccountGeneral() {
     })
 
     const {
+        reset,
         setValue,
         handleSubmit,
         formState: { isSubmitting },
     } = methods
 
+    useEffect(() => {
+        if (user) {
+            reset({
+                displayName: user.name,
+                email: user.email,
+                photoURL: user.avatar,
+                phoneNumber: user.phone,
+                address: user.address,
+            })
+        }
+    }, [user, reset])
+
     const onSubmit = handleSubmit(async (data) => {
         try {
-            await new Promise((resolve) => setTimeout(resolve, 500))
-            enqueueSnackbar('Update success!')
-            console.info('DATA', data)
+            if (user) {
+                if (data.photoURL !== user.avatar) {
+                    const resUploadImg = await uploadImage(data.photoURL)
+
+                    if (resUploadImg != null) {
+                        await updateProfile(data, resUploadImg)
+                        enqueueSnackbar('Update profile success', {
+                            variant: 'success',
+                        })
+                    }
+                } else {
+                    await updateProfile(data)
+                    enqueueSnackbar('Update profile success', {
+                        variant: 'success',
+                    })
+                }
+            }
         } catch (error) {
             console.error(error)
         }
@@ -132,12 +162,12 @@ export default function AccountGeneral() {
                         </Box>
 
                         <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
-                            <RHFTextField
+                            {/* <RHFTextField
                                 name="about"
                                 multiline
                                 rows={4}
                                 label="About"
-                            />
+                            /> */}
 
                             <LoadingButton
                                 type="submit"

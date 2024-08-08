@@ -1,7 +1,7 @@
 'use client'
 
 import isEqual from 'lodash/isEqual'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
@@ -21,7 +21,7 @@ import { RouterLink } from 'src/routes/components'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock'
+import { _roles, USER_STATUS_OPTIONS } from 'src/_mock'
 
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'
@@ -46,6 +46,8 @@ import {
     IUserTableFilterValue,
 } from 'src/types/user'
 
+import { deleteUser, useGetUsers } from 'src/api/user'
+
 import UserTableRow from '../user-table-row'
 import UserTableToolbar from '../user-table-toolbar'
 import UserTableFiltersResult from '../user-table-filters-result'
@@ -56,7 +58,7 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS]
 
 const TABLE_HEAD = [
     { id: 'name', label: 'Name' },
-    { id: 'phoneNumber', label: 'Phone Number', width: 270 },
+    { id: 'phone', label: 'Phone Number', width: 270 },
     { id: 'role', label: 'Role', width: 180 },
     { id: 'status', label: 'Status', width: 100 },
     { id: '', width: 128 },
@@ -79,9 +81,20 @@ export default function UserListView() {
 
     const confirm = useBoolean()
 
-    const [tableData, setTableData] = useState(_userList)
+    const [tableData, setTableData] = useState<IUserItem[]>([])
 
     const [filters, setFilters] = useState(defaultFilters)
+
+    const { users, usersLoading, usersEmpty } = useGetUsers({
+        page: table.page,
+        rowsPerPage: table.rowsPerPage,
+    })
+
+    useEffect(() => {
+        if (users.length) {
+            setTableData(users)
+        }
+    }, [users])
 
     const dataFiltered = applyFilter({
         inputData: tableData,
@@ -115,7 +128,7 @@ export default function UserListView() {
         (id: string) => {
             const deleteRow = tableData.filter((row) => row.id !== id)
             setTableData(deleteRow)
-
+            deleteUser(id)
             table.onUpdatePageDeleteRow(dataInPage.length)
         },
         [dataInPage.length, table, tableData]
@@ -207,35 +220,24 @@ export default function UserListView() {
                                         color={
                                             (tab.value === 'active' &&
                                                 'success') ||
-                                            (tab.value === 'pending' &&
-                                                'warning') ||
-                                            (tab.value === 'banned' &&
+                                            // (tab.value === 'pending' &&
+                                            //     'warning') ||
+                                            (tab.value === 'inactive' &&
                                                 'error') ||
                                             'default'
                                         }
                                     >
-                                        {tab.value === 'all' &&
-                                            _userList.length}
+                                        {tab.value === 'all' && users.length}
                                         {tab.value === 'active' &&
-                                            _userList.filter(
+                                            users.filter(
                                                 (user) =>
                                                     user.status === 'active'
                                             ).length}
 
-                                        {tab.value === 'pending' &&
-                                            _userList.filter(
+                                        {tab.value === 'inactive' &&
+                                            users.filter(
                                                 (user) =>
-                                                    user.status === 'pending'
-                                            ).length}
-                                        {tab.value === 'banned' &&
-                                            _userList.filter(
-                                                (user) =>
-                                                    user.status === 'banned'
-                                            ).length}
-                                        {tab.value === 'rejected' &&
-                                            _userList.filter(
-                                                (user) =>
-                                                    user.status === 'rejected'
+                                                    user.status === 'inactive'
                                             ).length}
                                     </Label>
                                 }
@@ -246,7 +248,6 @@ export default function UserListView() {
                     <UserTableToolbar
                         filters={filters}
                         onFilters={handleFilters}
-                        //
                         roleOptions={_roles}
                     />
 
@@ -377,7 +378,6 @@ export default function UserListView() {
                         color="error"
                         onClick={() => {
                             handleDeleteRows()
-                            confirm.onFalse()
                         }}
                     >
                         Delete

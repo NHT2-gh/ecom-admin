@@ -1,14 +1,20 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 
+import { useSnackbar } from 'notistack'
+
 import { paths } from 'src/routes/paths'
 
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock'
+import { updateOrder, useGetOrder } from 'src/api/order'
+import { ORDER_STATUS_OPTIONS } from 'src/_mock'
+
+import Iconify from 'src/components/iconify'
 
 import { useSettingsContext } from 'src/components/settings'
 
@@ -23,23 +29,47 @@ type Props = {
 }
 
 export default function OrderDetailsView({ id }: Props) {
+    const { order, error } = useGetOrder(id)
+    const currentOrder = order
+
     const settings = useSettingsContext()
 
-    const currentOrder = _orders.filter((order) => order.id === id)[0]
+    const { enqueueSnackbar } = useSnackbar()
 
-    const [status, setStatus] = useState(currentOrder.status)
+    const [status, setStatus] = useState('')
+
+    useEffect(() => {
+        setStatus(currentOrder?.status || '')
+    }, [currentOrder])
 
     const handleChangeStatus = useCallback((newValue: string) => {
         setStatus(newValue)
     }, [])
+    if (error) {
+        return <div>Error: {error.message}</div>
+    }
+
+    const handleOnSubmit = async (statusOrder: string) => {
+        const result = updateOrder(id, statusOrder)
+
+        enqueueSnackbar((await result) ? 'Update success!' : 'Update fail!')
+    }
+
+    const handleShippingPrice = () => {
+        if (currentOrder?.shippingMethod === 'standard') {
+            return 30000
+        }
+
+        return 0
+    }
 
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
             <OrderDetailsToolbar
                 backLink={paths.dashboard.order.root}
-                orderNumber={currentOrder.orderNumber}
-                createdAt={currentOrder.createdAt}
-                status={status}
+                orderNumber={`# ${(currentOrder?.id.split('-')[4] || '').toString()}`}
+                createdAt={currentOrder?.createdAt || new Date()}
+                status={status || ''}
                 onChangeStatus={handleChangeStatus}
                 statusOptions={ORDER_STATUS_OPTIONS}
             />
@@ -51,23 +81,42 @@ export default function OrderDetailsView({ id }: Props) {
                         direction={{ xs: 'column-reverse', md: 'column' }}
                     >
                         <OrderDetailsItems
-                            items={currentOrder.items}
-                            shipping={currentOrder.shipping}
-                            subTotal={currentOrder.subTotal}
-                            totalAmount={currentOrder.totalAmount}
+                            items={currentOrder?.items || []}
+                            shipping={
+                                handleShippingPrice() !== 0
+                                    ? handleShippingPrice()
+                                    : 0
+                            }
+                            subTotal={currentOrder?.totalAmount ?? 0}
+                            totalAmount={
+                                (currentOrder?.totalAmount ?? 0) +
+                                handleShippingPrice()
+                            }
                         />
                     </Stack>
                 </Grid>
 
                 <Grid xs={12} md={4}>
                     <OrderDetailsInfo
-                        customer={currentOrder.customer}
-                        delivery={currentOrder.delivery}
-                        payment={currentOrder.payment}
-                        shippingAddress={currentOrder.shippingAddress}
+                        customerName={currentOrder?.recipientName || ''}
+                        customerEmail={currentOrder?.recipientEmail || ''}
+                        customerPhone={currentOrder?.recipientPhone || ''}
+                        delivery={currentOrder?.shippingMethod || ''}
+                        payment={currentOrder?.paymentMethod || ''}
+                        shippingAddress={currentOrder?.shippingAddress || ''}
+                        trackingNumber={currentOrder?.trackingNumber || ''}
                     />
                 </Grid>
             </Grid>
+            <Button
+                type="submit"
+                color="inherit"
+                variant="contained"
+                startIcon={<Iconify icon="solar:pen-bold" />}
+                onClick={() => handleOnSubmit(status)}
+            >
+                Confirm Order
+            </Button>
         </Container>
     )
 }

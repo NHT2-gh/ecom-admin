@@ -6,24 +6,21 @@ export type IProductItem = {
     code: string
     price: number
     gender: string
-    // sizes: string[]
     publish: string
+    status?: string
     coverUrl: string
     images: Array<string | File>
-
     colors: string[]
     quantity: number
     category: {
         id: string
         name: string
     }
+    brand: { id: string; name: string }
     available: number
     totalSold: number
     description: string
-    // totalRatings: number
-    // totalReviews: number
     inventoryType: string
-    subDescription: string
     priceSale: number | null
     createdAt: Date
     saleLabel: {

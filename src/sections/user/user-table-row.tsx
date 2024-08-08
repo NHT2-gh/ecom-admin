@@ -36,13 +36,16 @@ export default function UserTableRow({
     onSelectRow,
     onDeleteRow,
 }: Props) {
-    const { name, avatarUrl, role, status, email, phoneNumber } = row
+    const { name, avatar, role, status, email, phone } = row
 
     const confirm = useBoolean()
 
     const quickEdit = useBoolean()
 
     const popover = usePopover()
+
+    const capitalizeFirstLetter = (string: string) =>
+        string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
 
     return (
         <>
@@ -52,7 +55,7 @@ export default function UserTableRow({
                 </TableCell>
 
                 <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
+                    <Avatar alt={name} src={avatar} sx={{ mr: 2 }} />
 
                     <ListItemText
                         primary={name}
@@ -66,10 +69,12 @@ export default function UserTableRow({
                 </TableCell>
 
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                    {phoneNumber}
+                    {phone ? `${phone}` : 'N/A'}
                 </TableCell>
 
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                    {capitalizeFirstLetter(role)}
+                </TableCell>
 
                 <TableCell>
                     <Label
@@ -77,7 +82,7 @@ export default function UserTableRow({
                         color={
                             (status === 'active' && 'success') ||
                             (status === 'pending' && 'warning') ||
-                            (status === 'banned' && 'error') ||
+                            (status === 'inactive' && 'error') ||
                             'default'
                         }
                     >
@@ -86,15 +91,6 @@ export default function UserTableRow({
                 </TableCell>
 
                 <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-                    <Tooltip title="Quick Edit" placement="top" arrow>
-                        <IconButton
-                            color={quickEdit.value ? 'inherit' : 'default'}
-                            onClick={quickEdit.onTrue}
-                        >
-                            <Iconify icon="solar:pen-bold" />
-                        </IconButton>
-                    </Tooltip>
-
                     <IconButton
                         color={popover.open ? 'inherit' : 'default'}
                         onClick={popover.onOpen}

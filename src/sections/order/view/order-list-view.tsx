@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
@@ -21,7 +21,7 @@ import { useBoolean } from 'src/hooks/use-boolean'
 
 import { fTimestamp } from 'src/utils/format-time'
 
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock'
+import { ORDER_STATUS_OPTIONS } from 'src/_mock'
 
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'
@@ -46,6 +46,8 @@ import {
     IOrderTableFilterValue,
 } from 'src/types/order'
 
+import { useGetOrders } from 'src/api/order'
+
 import OrderTableRow from '../order-table-row'
 import OrderTableToolbar from '../order-table-toolbar'
 import OrderTableFiltersResult from '../order-table-filters-result'
@@ -56,7 +58,7 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS]
 
 const TABLE_HEAD = [
     { id: 'orderNumber', label: 'Order', width: 116 },
-    { id: 'name', label: 'Customer' },
+    { id: 'recipientName', label: 'Customer' },
     { id: 'createdAt', label: 'Date', width: 140 },
     { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
     { id: 'totalAmount', label: 'Price', width: 140 },
@@ -82,9 +84,21 @@ export default function OrderListView() {
 
     const confirm = useBoolean()
 
-    const [tableData, setTableData] = useState(_orders)
+    const [tableData, setTableData] = useState<IOrderItem[]>([])
 
     const [filters, setFilters] = useState(defaultFilters)
+
+    const { orders, ordersLoading, ordersEmpty } = useGetOrders({
+        page: table.page,
+        rowsPerPage: table.rowsPerPage,
+    })
+    console.log(orders)
+
+    useEffect(() => {
+        if (orders.length) {
+            setTableData(orders)
+        }
+    }, [orders])
 
     const dateError =
         filters.startDate && filters.endDate
@@ -222,25 +236,25 @@ export default function OrderListView() {
                                             'default'
                                         }
                                     >
-                                        {tab.value === 'all' && _orders.length}
+                                        {tab.value === 'all' && orders.length}
                                         {tab.value === 'completed' &&
-                                            _orders.filter(
+                                            orders.filter(
                                                 (order) =>
                                                     order.status === 'completed'
                                             ).length}
 
                                         {tab.value === 'pending' &&
-                                            _orders.filter(
+                                            orders.filter(
                                                 (order) =>
                                                     order.status === 'pending'
                                             ).length}
                                         {tab.value === 'cancelled' &&
-                                            _orders.filter(
+                                            orders.filter(
                                                 (order) =>
                                                     order.status === 'cancelled'
                                             ).length}
                                         {tab.value === 'refunded' &&
-                                            _orders.filter(
+                                            orders.filter(
                                                 (order) =>
                                                     order.status === 'refunded'
                                             ).length}
@@ -424,12 +438,11 @@ function applyFilter({
     if (name) {
         inputData = inputData.filter(
             (order) =>
-                order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !==
-                    -1 ||
-                order.customer.name
+                order.id.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+                order.recipientName
                     .toLowerCase()
                     .indexOf(name.toLowerCase()) !== -1 ||
-                order.customer.email
+                order.recipientEmail
                     .toLowerCase()
                     .indexOf(name.toLowerCase()) !== -1
         )

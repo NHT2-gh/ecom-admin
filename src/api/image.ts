@@ -1,5 +1,6 @@
-import { ACCESS_TOKEN } from 'src/config-global'
 import axios, { endpoints } from 'src/utils/axios'
+
+const accessToken = sessionStorage.getItem('accessToken')
 
 export const uploadImage = async (file: File) => {
     console.log(`uploading ${JSON.stringify(file)}`)
@@ -7,7 +8,7 @@ export const uploadImage = async (file: File) => {
     formData.append('file', file)
     const config = {
         headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'multipart/form-data',
         },
     }
@@ -16,5 +17,5 @@ export const uploadImage = async (file: File) => {
     if (res.status !== 200) {
         throw new Error('Failed to upload image')
     }
-    return res.data ?? 'empty-url'
+    return res.data.data ?? null
 }

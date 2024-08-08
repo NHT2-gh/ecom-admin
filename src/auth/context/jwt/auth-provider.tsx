@@ -19,7 +19,7 @@ import { AuthUserType, ActionMapType, AuthStateType } from '../../types'
 enum Types {
     INITIAL = 'INITIAL',
     LOGIN = 'LOGIN',
-    REGISTER = 'REGISTER',
+    // REGISTER = 'REGISTER',
     LOGOUT = 'LOGOUT',
 }
 
@@ -30,9 +30,9 @@ type Payload = {
     [Types.LOGIN]: {
         user: AuthUserType
     }
-    [Types.REGISTER]: {
-        user: AuthUserType
-    }
+    // [Types.REGISTER]: {
+    //     user: AuthUserType
+    // }
     [Types.LOGOUT]: undefined
 }
 
@@ -58,12 +58,12 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
             user: {},
         }
     }
-    if (action.type === Types.REGISTER) {
-        return {
-            ...state,
-            user: {},
-        }
-    }
+    // if (action.type === Types.REGISTER) {
+    //     return {
+    //         ...state,
+    //         user: {},
+    //     }
+    // }
     if (action.type === Types.LOGOUT) {
         return {
             ...state,
@@ -150,39 +150,39 @@ export function AuthProvider({ children }: Props) {
         })
     }, [])
 
-    // REGISTER
-    const register = useCallback(
-        async (
-            email: string,
-            password: string,
-            firstName: string,
-            lastName: string
-        ) => {
-            const data = {
-                email,
-                password,
-                firstName,
-                lastName,
-            }
+    // // REGISTER
+    // const register = useCallback(
+    //     async (
+    //         email: string,
+    //         password: string,
+    //         firstName: string,
+    //         lastName: string
+    //     ) => {
+    //         const data = {
+    //             email,
+    //             password,
+    //             firstName,
+    //             lastName,
+    //         }
 
-            const res = await axios.post(endpoints.auth.register, data)
+    //         const res = await axios.post(endpoints.auth.register, data)
 
-            const { accessToken, user } = res.data
+    //         const { accessToken, user } = res.data
 
-            sessionStorage.setItem(STORAGE_KEY, accessToken)
+    //         sessionStorage.setItem(STORAGE_KEY, accessToken)
 
-            dispatch({
-                type: Types.REGISTER,
-                payload: {
-                    user: {
-                        ...user,
-                        accessToken,
-                    },
-                },
-            })
-        },
-        []
-    )
+    //         dispatch({
+    //             type: Types.REGISTER,
+    //             payload: {
+    //                 user: {
+    //                     ...user,
+    //                     accessToken,
+    //                 },
+    //             },
+    //         })
+    //     },
+    //     []
+    // )
 
     // LOGOUT
     const logout = useCallback(async () => {
@@ -195,7 +195,6 @@ export function AuthProvider({ children }: Props) {
     // ----------------------------------------------------------------------
 
     const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated'
-    // console.log('checkAuthenticated', checkAuthenticated)
 
     const status = state.loading ? 'loading' : checkAuthenticated
 
@@ -208,10 +207,10 @@ export function AuthProvider({ children }: Props) {
             unauthenticated: status === 'unauthenticated',
             //
             login,
-            register,
+            // register,
             logout,
         }),
-        [login, logout, register, state.user, status]
+        [login, logout, state.user, status]
     )
 
     return (

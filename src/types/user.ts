@@ -1,4 +1,4 @@
-import { CustomFile } from 'src/components/upload'
+// import { CustomFile } from 'src/components/upload'
 
 // ----------------------------------------------------------------------
 
@@ -14,23 +14,22 @@ export type IUserTableFilters = {
 
 export type IUserItem = {
     id: string
+    firstName?: string
+    lastName?: string
+    password: string
     name: string
     role: string
     email: string
     status: string
+    avatar: string
     address: string
-    avatarUrl: string
-    phoneNumber: string
-    isVerified: boolean
-}
-
-export type IUserAccount = {
-    email: string
-    displayName: string
-    about: string | null
-    address: string | null
-    phoneNumber: string | null
-    photoURL: CustomFile | string | null
+    gender: string
+    birthday: Date
+    phone: string
+    createdAt: Date
+    updatedAt: Date
+    created_at?: Date
+    updated_at?: Date
 }
 
 export type IUserAccountChangePassword = {
