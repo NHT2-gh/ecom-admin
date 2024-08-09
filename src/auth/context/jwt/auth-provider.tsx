@@ -58,12 +58,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
             user: {},
         }
     }
-    // if (action.type === Types.REGISTER) {
-    //     return {
-    //         ...state,
-    //         user: {},
-    //     }
-    // }
+
     if (action.type === Types.LOGOUT) {
         return {
             ...state,
@@ -93,7 +88,7 @@ export function AuthProvider({ children }: Props) {
 
                 const res = await axios.get(endpoints.auth.me)
 
-                const { user } = res.data
+                const user = res.data.data
 
                 dispatch({
                     type: Types.INITIAL,
@@ -149,40 +144,6 @@ export function AuthProvider({ children }: Props) {
             },
         })
     }, [])
-
-    // // REGISTER
-    // const register = useCallback(
-    //     async (
-    //         email: string,
-    //         password: string,
-    //         firstName: string,
-    //         lastName: string
-    //     ) => {
-    //         const data = {
-    //             email,
-    //             password,
-    //             firstName,
-    //             lastName,
-    //         }
-
-    //         const res = await axios.post(endpoints.auth.register, data)
-
-    //         const { accessToken, user } = res.data
-
-    //         sessionStorage.setItem(STORAGE_KEY, accessToken)
-
-    //         dispatch({
-    //             type: Types.REGISTER,
-    //             payload: {
-    //                 user: {
-    //                     ...user,
-    //                     accessToken,
-    //                 },
-    //             },
-    //         })
-    //     },
-    //     []
-    // )
 
     // LOGOUT
     const logout = useCallback(async () => {

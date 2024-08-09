@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button'
 import Avatar from '@mui/material/Avatar'
-import Tooltip from '@mui/material/Tooltip'
+// import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
 import Checkbox from '@mui/material/Checkbox'
@@ -44,9 +44,6 @@ export default function UserTableRow({
 
     const popover = usePopover()
 
-    const capitalizeFirstLetter = (string: string) =>
-        string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
-
     return (
         <>
             <TableRow hover selected={selected}>
@@ -73,7 +70,7 @@ export default function UserTableRow({
                 </TableCell>
 
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                    {capitalizeFirstLetter(role)}
+                    {`${role.charAt(0).toUpperCase()}${role.slice(1, role.length)}`}
                 </TableCell>
 
                 <TableCell>

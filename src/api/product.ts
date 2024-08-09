@@ -1,11 +1,9 @@
-import { useMemo } from 'react'
-import { IProductItem } from 'src/types/product'
-import { _productDetails, _productList } from 'src/_mock'
 import useSWR from 'swr'
-import axios, { endpoints, fetcher } from 'src/utils/axios'
-import { ACCESS_TOKEN } from 'src/config-global'
-import { da } from 'date-fns/locale'
-// import { ca } from 'date-fns/locale'
+import { useMemo } from 'react'
+
+import axios, { fetcher, endpoints } from 'src/utils/axios'
+
+import { IProductItem } from 'src/types/product'
 
 // ----------------------------------------------------------------------
 interface GetProductsProps {
@@ -234,7 +232,7 @@ export async function deleteProduct(productId: string) {
 export async function deleteProducts(productIds: string[]) {
     try {
         const headers = {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            Authorization: `Bearer ${accessToken}`,
             Accept: '*/*',
         }
         await productIds.map(async (id) => {

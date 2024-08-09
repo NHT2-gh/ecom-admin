@@ -72,7 +72,7 @@ export default function OverviewEcommerceView() {
                         chart={{
                             series: [
                                 { label: 'Perfume', value: 44 },
-                                { label: 'Shoes', value: 75 },
+                                { label: 'Watches', value: 75 },
                             ],
                         }}
                     />

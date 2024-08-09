@@ -172,7 +172,7 @@ export default function CategoryListView() {
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
                         {
-                            name: 'category',
+                            name: 'Category',
                             href: paths.dashboard.category.root,
                         },
                         { name: 'List' },

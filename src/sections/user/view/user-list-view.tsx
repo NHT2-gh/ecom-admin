@@ -21,6 +21,7 @@ import { RouterLink } from 'src/routes/components'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 
+import { deleteUser, useGetUsers } from 'src/api/user'
 import { _roles, USER_STATUS_OPTIONS } from 'src/_mock'
 
 import Label from 'src/components/label'
@@ -45,8 +46,6 @@ import {
     IUserTableFilters,
     IUserTableFilterValue,
 } from 'src/types/user'
-
-import { deleteUser, useGetUsers } from 'src/api/user'
 
 import UserTableRow from '../user-table-row'
 import UserTableToolbar from '../user-table-toolbar'

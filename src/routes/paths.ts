@@ -31,7 +31,7 @@ export const paths = {
     dashboard: {
         root: ROOTS.DASHBOARD,
         user: {
-            root: `${ROOTS.DASHBOARD}/user`,
+            root: `${ROOTS.DASHBOARD}/user/list`,
             new: `${ROOTS.DASHBOARD}/user/new`,
             list: `${ROOTS.DASHBOARD}/user/list`,
             account: `${ROOTS.DASHBOARD}/user/account`,

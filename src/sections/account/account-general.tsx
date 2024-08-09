@@ -1,8 +1,8 @@
 'use client'
 
 import * as Yup from 'yup'
-import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useEffect, useCallback } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 
 import Box from '@mui/material/Box'
@@ -14,14 +14,14 @@ import LoadingButton from '@mui/lab/LoadingButton'
 
 import { fData } from 'src/utils/format-number'
 
+import { uploadImage } from 'src/api/image'
+import { ViewProfile, updateProfile } from 'src/api/profile'
+
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, {
     RHFTextField,
     RHFUploadAvatar,
 } from 'src/components/hook-form'
-
-import { uploadImage } from 'src/api/image'
-import { ViewProfile, updateProfile } from 'src/api/profile'
 
 // ----------------------------------------------------------------------
 

@@ -1,7 +1,9 @@
-import { useMemo } from 'react'
 import useSWR from 'swr'
+import { useMemo } from 'react'
+
+import axios, { fetcher, endpoints } from 'src/utils/axios'
+
 import { IBrandItem } from 'src/types/brand'
-import axios, { endpoints, fetcher } from 'src/utils/axios'
 
 interface GetBrandsProps {
     page: number
@@ -93,11 +95,13 @@ export async function updateBrand({
 }: {
     data: Omit<IBrandItem, 'status' | 'createdAt' | 'updatedAt'>
 }) {
+    console.log('data', data)
     const payload = JSON.stringify({
         id: data.id,
         name: data?.name,
         image: data?.image,
     })
+    console.log('payload', payload)
 
     const headers = {
         'Content-Type': 'application/json',

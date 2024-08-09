@@ -1,5 +1,4 @@
 // ----------------------------------------------------------------------
-
 export const _id = [...Array(40)].map(
     (_, index) => `e99f09a7-dd88-49d5-b1c8-1daf80c2d7b${index + 1}`
 )
@@ -162,7 +161,12 @@ export const _phoneNumbers = [
 
 // ----------------------------------------------------------------------
 
-export const _roles = ['Admin', 'User']
+export const _roles = ['admin', 'user']
+
+export const ROLES_OPTION = [
+    { label: 'User', value: 'user' },
+    { label: 'Admin', value: 'admin' },
+]
 
 // ----------------------------------------------------------------------
 

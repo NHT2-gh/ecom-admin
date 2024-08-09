@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-import Link from '@mui/material/Link'
+// import Link from '@mui/material/Link'
 import Alert from '@mui/material/Alert'
 import Stack from '@mui/material/Stack'
 import IconButton from '@mui/material/IconButton'
@@ -13,8 +13,8 @@ import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
 import InputAdornment from '@mui/material/InputAdornment'
 
-import { paths } from 'src/routes/paths'
-import { RouterLink } from 'src/routes/components'
+// import { paths } from 'src/routes/paths'
+// import { RouterLink } from 'src/routes/components'
 import { useRouter, useSearchParams } from 'src/routes/hooks'
 
 import { useBoolean } from 'src/hooks/use-boolean'
@@ -48,7 +48,7 @@ export default function JwtLoginView() {
     })
 
     const defaultValues = {
-        email: 'thanhnn489@gmail.com',
+        email: 'tthanhnguyen105@gmail.com',
         password: '123456',
     }
 
@@ -79,7 +79,7 @@ export default function JwtLoginView() {
         <Stack spacing={2} sx={{ mb: 5 }}>
             <Typography variant="h4">Sign in to Dashboard</Typography>
 
-            <Stack direction="row" spacing={0.5}>
+            {/* <Stack direction="row" spacing={0.5}>
                 <Typography variant="body2">New user?</Typography>
 
                 <Link
@@ -89,7 +89,7 @@ export default function JwtLoginView() {
                 >
                     Create an account
                 </Link>
-            </Stack>
+            </Stack> */}
         </Stack>
     )
 
@@ -120,7 +120,7 @@ export default function JwtLoginView() {
                 }}
             />
 
-            <Link
+            {/* <Link
                 component={RouterLink}
                 href={paths.auth.jwt.forgotPassword}
                 variant="body2"
@@ -129,7 +129,7 @@ export default function JwtLoginView() {
                 sx={{ alignSelf: 'flex-end' }}
             >
                 Forgot password?
-            </Link>
+            </Link> */}
 
             <LoadingButton
                 fullWidth

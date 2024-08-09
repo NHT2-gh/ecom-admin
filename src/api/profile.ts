@@ -1,17 +1,13 @@
 import useSWR from 'swr'
 import { useMemo } from 'react'
 
-import axios, { endpoints, fetcher } from 'src/utils/axios'
+import axios, { fetcher, endpoints } from 'src/utils/axios'
 
 import { IUserItem } from 'src/types/user'
 
-interface GetUsersProps {
-    page: number
-    rowsPerPage: number
-}
-
 const accessToken = sessionStorage.getItem('accessToken')
 
+// ----------------------------------------------------------------------
 export function ViewProfile() {
     const url = endpoints.auth.me
     const { data: response, error } = useSWR(

@@ -2,8 +2,6 @@ import { paths } from 'src/routes/paths'
 
 // API
 // ----------------------------------------------------------------------
-export const ACCESS_TOKEN =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTkxMTM2ZC1kNjEzLTdhYWYtYWM4Yy1mMGZhMWE3OTYxNjEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MjI4MjYxNTAsImV4cCI6MTcyMzQzMDk1MH0.-A7QpYg33QA9iNSAh6MyfVir5rOgrQezLF6XTxISnbg'
 export const HOST_API = process.env.NEXT_PUBLIC_HOST_API
 export const ASSETS_API = process.env.NEXT_PUBLIC_ASSETS_API
 

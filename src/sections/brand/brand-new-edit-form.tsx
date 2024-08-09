@@ -81,24 +81,27 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
             if (currentBrand) {
                 if (image !== currentBrand.image) {
                     const resUploadImg = await uploadImage(image)
+                    console.log('resUploadImg', resUploadImg)
                     await updateBrand({
                         data: {
                             id: currentBrand?.id,
-                            name,
-                            image: resUploadImg.data,
+                            name: currentBrand?.name,
+                            image: resUploadImg,
+                        },
+                    })
+                } else {
+                    await updateBrand({
+                        data: {
+                            id: currentBrand?.id,
+                            name: currentBrand?.name,
+                            image: currentBrand.image,
                         },
                     })
                 }
-                await updateBrand({
-                    data: {
-                        id: currentBrand?.id,
-                        name,
-                        image: currentBrand.image,
-                    },
-                })
             } else {
                 const resUploadImg = await uploadImage(image)
-                const payload = { data: { name, image: resUploadImg.data } }
+                const payload = { data: { name, image: resUploadImg } }
+                console.log('payload', payload)
                 await createBrand(payload)
             }
             reset()
