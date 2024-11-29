@@ -150,6 +150,13 @@ export default function ProductListView() {
         })
     }
 
+    // const handleEditRow = useCallback(
+    //     (id: string) => {
+    //         router.push(paths.dashboard.product.edit(id))
+    //     },
+    //     [router]
+    // )
+
     const handleEditRow = useCallback(
         (id: string) => {
             router.push(paths.dashboard.product.edit(id))

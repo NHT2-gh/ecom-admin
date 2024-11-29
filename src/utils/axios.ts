@@ -1,9 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios'
-import { de } from 'date-fns/locale'
-import { create } from 'lodash'
 
 import { HOST_API } from 'src/config-global'
-import { list } from 'src/theme/overrides/components/list'
 
 // ----------------------------------------------------------------------
 
@@ -58,6 +55,11 @@ export const endpoints = {
         list: `${VERSION_PREFIX}/categories`,
         edit: `${VERSION_PREFIX}/categories/`,
         delete: `${VERSION_PREFIX}/categories/`,
+    },
+    attribute: {
+        create: `${VERSION_PREFIX}/product-attributes`,
+        list: `${VERSION_PREFIX}/product-attributes`,
+        edit: `${VERSION_PREFIX}/product-attributes/`,
     },
     order: {
         create: `${VERSION_PREFIX}/carts/make-order`,

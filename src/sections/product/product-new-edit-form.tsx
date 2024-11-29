@@ -1,7 +1,7 @@
 import * as Yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useMemo, useEffect, useCallback, useState } from 'react'
+import { useMemo, useEffect, useCallback } from 'react'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -16,21 +16,11 @@ import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import {
-    Button,
-    IconButton,
-    Table,
-    TableBody,
-    TableContainer,
-    Tooltip,
-} from '@mui/material'
 
 import { paths } from 'src/routes/paths'
 import { useRouter } from 'src/routes/hooks'
 
 import { useResponsive } from 'src/hooks/use-responsive'
-
-import { fCurrency } from 'src/utils/format-number'
 
 import { uploadImage } from 'src/api/image'
 import { useGetBrands } from 'src/api/brand'
@@ -38,8 +28,6 @@ import { useGetCategorys } from 'src/api/category'
 import { PRODUCT_GENDER_OPTIONS } from 'src/_mock'
 import { createProduct, updateProduct } from 'src/api/product'
 
-import Iconify from 'src/components/iconify'
-import Scrollbar from 'src/components/scrollbar'
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, {
     RHFEditor,
@@ -47,28 +35,12 @@ import FormProvider, {
     RHFTextField,
     RHFMultiCheckbox,
 } from 'src/components/hook-form'
-import {
-    useTable,
-    emptyRows,
-    TableEmptyRows,
-    TableHeadCustom,
-    TableSelectedAction,
-} from 'src/components/table'
 
-import { IProductItem, IProductItemVariant } from 'src/types/product'
+import { IProductItem } from 'src/types/product'
 
-import ProductVariantTableRow from './product-variant-table-row'
-import TableRowEmpty from './product-variant-table-row-empty'
+import ProductVariantTable from './product-variant-table'
 
 // ----------------------------------------------------------------------
-
-const TABLE_HEAD = [
-    { id: 'color', label: 'Color', width: 90 },
-    { id: 'size', label: 'Size', width: 90 },
-    { id: 'quantity', label: 'Quantity', width: 90 },
-    { id: 'created_at', label: 'Created At', width: 90 },
-    { id: 'updated_at', label: 'Updated At', width: 90 },
-]
 
 type Props = {
     currentProduct?: IProductItem
@@ -76,15 +48,6 @@ type Props = {
 
 export default function ProductNewEditForm({ currentProduct }: Props) {
     const router = useRouter()
-    const table = useTable()
-    const [tableData, setTableData] = useState<IProductItemVariant[]>([])
-    const denseHeight = table.dense ? 60 : 80
-
-    useEffect(() => {
-        if (currentProduct) {
-            setTableData(currentProduct.variants)
-        }
-    }, [currentProduct])
 
     const { categorys } = useGetCategorys({
         page: 1,
@@ -170,8 +133,6 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             )
         }
     })
-
-    const handleAddVariant = () => {}
 
     const handleUploadImage = useCallback(async () => {
         const files = values.images || []
@@ -378,104 +339,11 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                 <Typography variant="subtitle2">
                                     Variants
                                 </Typography>
-
-                                <Button
-                                    type="button"
-                                    variant="contained"
-                                    size="small"
-                                    onClick={handleAddVariant}
-                                    sx={{ gap: 0.5 }}
-                                >
-                                    <Iconify icon="eva:plus-fill" /> Add Variant
-                                </Button>
                             </Stack>
 
-                            <Card>
-                                <TableContainer
-                                    sx={{
-                                        position: 'relative',
-                                        overflow: 'unset',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <TableSelectedAction
-                                        dense={table.dense}
-                                        numSelected={table.selected.length}
-                                        rowCount={tableData.length}
-                                        onSelectAllRows={(checked) =>
-                                            table.onSelectAllRows(
-                                                checked,
-                                                tableData.map((row) => row.id)
-                                            )
-                                        }
-                                        action={
-                                            <Tooltip title="Delete">
-                                                <IconButton
-                                                    color="primary"
-                                                    // onClick={confirm.onTrue}
-                                                >
-                                                    <Iconify icon="solar:trash-bin-trash-bold" />
-                                                </IconButton>
-                                            </Tooltip>
-                                        }
-                                    />
-
-                                    <Scrollbar>
-                                        <Table
-                                            size={
-                                                table.dense ? 'small' : 'medium'
-                                            }
-                                            sx={{ minWidth: 700 }}
-                                        >
-                                            <TableHeadCustom
-                                                order={table.order}
-                                                orderBy={table.orderBy}
-                                                headLabel={TABLE_HEAD}
-                                                rowCount={tableData.length}
-                                                numSelected={
-                                                    table.selected.length
-                                                }
-                                                onSort={table.onSort}
-                                                onSelectAllRows={(checked) =>
-                                                    table.onSelectAllRows(
-                                                        checked,
-                                                        tableData.map(
-                                                            (row) => row.id
-                                                        )
-                                                    )
-                                                }
-                                            />
-
-                                            <TableBody>
-                                                {tableData.map((row) => (
-                                                    <ProductVariantTableRow
-                                                        key={row.id}
-                                                        row={row}
-                                                        selected={table.selected.includes(
-                                                            row.id
-                                                        )}
-                                                        onSelectRow={() =>
-                                                            table.onSelectRow(
-                                                                row.id
-                                                            )
-                                                        }
-                                                        canEdit={false}
-                                                    />
-                                                ))}
-
-                                                <TableEmptyRows
-                                                    height={denseHeight}
-                                                    emptyRows={emptyRows(
-                                                        table.page,
-                                                        table.rowsPerPage,
-                                                        tableData.length
-                                                    )}
-                                                />
-                                            </TableBody>
-                                        </Table>
-                                    </Scrollbar>
-                                </TableContainer>
-                            </Card>
+                            <ProductVariantTable
+                                variants={currentProduct?.variants || []}
+                            />
                         </Stack>
                     </Stack>
                 </Card>

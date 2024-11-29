@@ -1,19 +1,15 @@
-import { useMemo } from 'react'
 import useSWR from 'swr'
+import { useMemo } from 'react'
+
+import axios, { fetcher, endpoints } from 'src/utils/axios'
+
 import { ICategoryItem } from 'src/types/categorys'
-import axios, { endpoints, fetcher } from 'src/utils/axios'
-// import { status } from 'nprogress'
-import { ACCESS_TOKEN } from 'src/config-global'
-import { de } from 'date-fns/locale'
-// import { Accordion } from '@mui/material'
-// import { da } from 'date-fns/locale'
 
 interface GetCategorysProps {
     page: number
     rowsPerPage: number
 }
 
-// const STORAGE_KEY = 'accessToken'
 const accessToken = sessionStorage.getItem('accessToken')
 
 export async function createCategory({

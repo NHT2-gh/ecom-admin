@@ -31,20 +31,12 @@ export type IProductItemVariant = {
     quantity: number
     created_at: string
     updated_at: string
-    color: IColor
-    size: ISize
+    color: IAttribute
+    size: IAttribute
+    isNew?: boolean
 }
 
-export type IColor = {
-    id: string
-    type: string
-    displayName: string
-    displayValue: string
-    created_at: string
-    updated_at: string
-}
-
-export type ISize = {
+export type IAttribute = {
     id: string
     type: string
     displayName: string

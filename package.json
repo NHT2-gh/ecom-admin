@@ -31,6 +31,7 @@
         "@mui/lab": "^5.0.0-alpha.147",
         "@mui/material": "^5.14.12",
         "@mui/system": "^5.14.12",
+        "@mui/x-data-grid": "^7.22.3",
         "@mui/x-date-pickers": "^6.16.1",
         "@react-pdf/renderer": "^3.1.12",
         "apexcharts": "^3.43.0",
@@ -102,5 +103,5 @@
             "git add ."
         ]
     },
-    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "packageManager": "pnpm@9.12.1+sha512.e5a7e52a4183a02d5931057f7a0dbff9d5e9ce3161e33fa68ae392125b79282a8a8a470a51dfc8a0ed86221442eb2fb57019b0990ed24fab519bf0e1bc5ccfc4"
 }

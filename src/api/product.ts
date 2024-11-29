@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 import axios, { fetcher, endpoints } from 'src/utils/axios'
 
 import { IProductItem } from 'src/types/product'
-import { create } from 'lodash'
 
 // ----------------------------------------------------------------------
 interface GetProductsProps {
@@ -29,13 +28,15 @@ export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
             onErrorRetry(err, key, config, revalidate, { retryCount }) {
                 if (retryCount >= 10) return
 
+                console.log('err', err)
+
                 if (err.status === 404) return
 
                 setTimeout(() => revalidate({ retryCount }), 5000)
             },
         }
     )
-    // const products = response.data.data
+
     const products: IProductItem[] = response?.data?.data.map(
         (dataItem: IProductItem) => ({
             id: dataItem.id,
@@ -64,7 +65,7 @@ export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
             productsValidating: isValidating,
             productsEmpty: !false && !products?.length,
         }),
-        [response, isLoading, error, isValidating] // eslint-disable-line
+        [error, isLoading, isValidating, products]
     )
 
     return memoizedValue
@@ -87,35 +88,33 @@ export function useGetProduct(productId: string) {
 
     const data = res?.data
 
-    const product: IProductItem | undefined = data
-        ? {
-              id: data.id,
-              name: data.name,
-              price: data.price,
-              gender: data.gender,
-              status: data.status,
-              coverUrl: data.images ? data.images[0] : '',
-              images: data.images || [],
-              category: data.category,
-              brand: data.brand,
-              description: data.description,
-              inventoryType: 'in stock',
-              salePrice: data.salePrice,
-              createdAt: data.created_at,
-              created_at: data.created_at,
-              update_at: data.updated_at,
-              content: data.content || '',
-              variants: data.variants || [],
-          }
-        : undefined
-
-    const memoizedValue = useMemo(
-        () => ({
+    const memoizedValue = useMemo(() => {
+        const product: IProductItem | undefined = data
+            ? {
+                  id: data.id,
+                  name: data.name,
+                  price: data.price,
+                  gender: data.gender,
+                  status: data.status,
+                  coverUrl: data.images ? data.images[0] : '',
+                  images: data.images || [],
+                  category: data.category,
+                  brand: data.brand,
+                  description: data.description,
+                  inventoryType: 'in stock',
+                  salePrice: data.salePrice,
+                  createdAt: data.created_at,
+                  created_at: data.created_at,
+                  update_at: data.updated_at,
+                  content: data.content || '',
+                  variants: data.variants || [],
+              }
+            : undefined
+        return {
             product,
             error,
-        }),
-        [data, error] // eslint-disable-line
-    )
+        }
+    }, [data, error])
 
     return memoizedValue
 }

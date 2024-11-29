@@ -3,7 +3,6 @@ import axios, { endpoints } from 'src/utils/axios'
 const accessToken = sessionStorage.getItem('accessToken')
 
 export const uploadImage = async (file: File) => {
-    // console.log(`uploading ${JSON.stringify(file)}`)
     const formData = new FormData()
     formData.append('file', file)
     const config = {

@@ -35,7 +35,7 @@ export function useGetOrders({ page, rowsPerPage }: GetOrdersProps) {
             revalidateOnFocus: false,
             keepPreviousData: true,
             onErrorRetry(err, key, config, revalidate, { retryCount }) {
-                if (retryCount >= 10) return
+                if (retryCount >= 3) return
 
                 if (err.status === 404) return
 

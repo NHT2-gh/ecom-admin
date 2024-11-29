@@ -28,10 +28,10 @@ import { IProductItem } from 'src/types/product'
 type Props = {
     row: IProductItem
     selected: boolean
-    onEditRow?: VoidFunction
-    onViewRow?: VoidFunction
-    onSelectRow?: VoidFunction
-    onDeleteRow?: VoidFunction
+    onEditRow: VoidFunction
+    onViewRow: VoidFunction
+    onSelectRow: VoidFunction
+    onDeleteRow: VoidFunction
 }
 
 export default function ProductTableRow({
@@ -167,7 +167,7 @@ export default function ProductTableRow({
             >
                 <MenuItem
                     onClick={() => {
-                        if (onViewRow) onViewRow()
+                        onViewRow()
                         popover.onClose()
                     }}
                 >
@@ -177,7 +177,7 @@ export default function ProductTableRow({
 
                 <MenuItem
                     onClick={() => {
-                        if (onEditRow) onEditRow()
+                        onEditRow()
                         popover.onClose()
                     }}
                 >
