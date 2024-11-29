@@ -36,6 +36,7 @@ import FormProvider, {
     RHFMultiCheckbox,
 } from 'src/components/hook-form'
 
+import { BaseStatus } from 'src/types/other'
 import { IProductItem } from 'src/types/product'
 
 import ProductVariantTable from './product-variant-table'
@@ -65,26 +66,31 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
 
     const NewProductSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
-        images: Yup.array().min(1, 'Images is required'),
-        category: Yup.string().required('Category is required'),
+        images: Yup.array(),
+        categoryId: Yup.string().required('Category is required'),
         price: Yup.number().moreThan(0, 'Price should not be $0.00'),
+        content: Yup.string().required('Content is required'),
         description: Yup.string().required('Description is required'),
-        brand: Yup.string().required('Brand is required'),
-        publish: Yup.string(),
+        brandId: Yup.string().required('Brand is required'),
+        // inventoryType: Yup.string(),
+        status: Yup.string(),
+        salePrice: Yup.number(),
     })
 
     const defaultValues = useMemo(
         () => ({
             name: currentProduct?.name || '',
+            content: currentProduct?.content || '',
             description: currentProduct?.description || '',
             images: currentProduct?.images || [],
             price: currentProduct?.price || 0,
-            publish: currentProduct?.status || 'active',
-            priceSale: currentProduct?.salePrice || 0,
+            status: currentProduct?.status || 'active',
+            salePrice: currentProduct?.salePrice || 0,
             gender: currentProduct?.gender || '',
-            category: currentProduct?.category?.id || '',
-            brand: currentProduct?.brand?.id || '',
+            categoryId: currentProduct?.category?.id || '',
+            brandId: currentProduct?.brand?.id || '',
             variants: currentProduct?.variants || [],
+            // inventoryType: Yup.string(),
         }),
         [currentProduct]
     )
@@ -117,6 +123,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             if (currentProduct) {
                 await updateProduct(currentProduct.id, data)
             } else {
+                console.log('data', data)
                 await createProduct(data)
             }
 
@@ -126,7 +133,6 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             )
             router.push(paths.dashboard.product.root)
         } catch (error) {
-            console.log('error', error)
             enqueueSnackbar(
                 currentProduct ? 'Update failed!' : 'Create failed!',
                 { variant: 'error' }
@@ -152,9 +158,8 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                 files.length !== 0 ? 'Upload success!' : 'Upload failed!'
             )
         } catch (error) {
-            enqueueSnackbar('Upload failed!')
-
-            throw new Error(`thowo ${JSON.stringify(error)}`)
+            enqueueSnackbar('Upload failed!', { variant: 'error' })
+            throw new Error(error)
         }
     }, [setValue, values.images, enqueueSnackbar])
 
@@ -214,8 +219,15 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
 
                         <Stack spacing={1.5}>
                             <Typography variant="subtitle2">Content</Typography>
-                            <RHFEditor simple name="description" />
+                            <RHFEditor simple name="content" />
                         </Stack>
+
+                        <RHFTextField
+                            name="description"
+                            label="Description"
+                            multiline
+                            rows={3}
+                        />
 
                         <Stack spacing={1.5}>
                             <Typography variant="subtitle2">Images</Typography>
@@ -267,7 +279,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                             }}
                         >
                             <Controller
-                                name="category"
+                                name="categoryId"
                                 control={control}
                                 defaultValue={
                                     currentProduct?.category?.id || ''
@@ -277,6 +289,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                         {...field}
                                         select
                                         label="Category"
+                                        placeholder="Select Category"
                                         fullWidth
                                         InputLabelProps={{ shrink: true }}
                                     >
@@ -293,7 +306,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                             />
 
                             <Controller
-                                name="brand"
+                                name="brandId"
                                 control={control}
                                 defaultValue={currentProduct?.brand?.id || ''}
                                 render={({ field }) => (
@@ -302,6 +315,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                         select
                                         label="Brand"
                                         fullWidth
+                                        placeholder="Select Brand"
                                         InputLabelProps={{ shrink: true }}
                                     >
                                         {brands.map((brand) => (
@@ -393,7 +407,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                         />
 
                         <RHFTextField
-                            name="priceSale"
+                            name="salePrice"
                             label="Sale Price"
                             placeholder="0.00"
                             type="number"
@@ -424,7 +438,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                 <FormControlLabel
                     control={
                         <Controller
-                            name="publish"
+                            name="status"
                             control={control}
                             render={({ field }) => (
                                 <Switch
@@ -441,7 +455,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                             )}
                         />
                     }
-                    label={values.publish === 'active' ? 'Active' : 'Inactive'}
+                    label={values.status === 'active' ? 'Active' : 'Inactive'}
                     sx={{ mr: 'auto' }}
                 />
 

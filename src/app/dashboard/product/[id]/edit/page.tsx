@@ -16,10 +16,20 @@ type Props = {
 export default function ProductEditPage({ params }: Props) {
     const { id } = params
 
+    console.log(id)
+
     return <ProductEditView id={id} />
 }
 
 export async function generateStaticParams() {
+    console.log(
+        _productList.map((product) => ({
+            params: {
+                id: product.id,
+            },
+        }))
+    )
+
     return _productList.map((product) => ({
         id: product.id,
     }))

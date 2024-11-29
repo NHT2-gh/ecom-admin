@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography'
 import Image from '../image'
 import Iconify from '../iconify'
 import { UploadProps } from './types'
-import RejectionFiles from './errors-rejection-files'
+// import RejectionFiles from './errors-rejection-files'
 
 // ----------------------------------------------------------------------
 
@@ -154,7 +154,7 @@ export default function UploadAvatar({
 
             {helperText && helperText}
 
-            <RejectionFiles fileRejections={fileRejections} />
+            {/* <RejectionFiles fileRejections={fileRejections} /> */}
         </>
     )
 }

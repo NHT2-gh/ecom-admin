@@ -3,7 +3,8 @@ import { useMemo } from 'react'
 
 import axios, { fetcher, endpoints } from 'src/utils/axios'
 
-import { IProductItem } from 'src/types/product'
+import { IProductItem, IProductItemVariant } from 'src/types/product'
+import { de } from 'date-fns/locale'
 
 // ----------------------------------------------------------------------
 interface GetProductsProps {
@@ -26,12 +27,8 @@ export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
             revalidateOnFocus: false,
             keepPreviousData: true,
             onErrorRetry(err, key, config, revalidate, { retryCount }) {
-                if (retryCount >= 10) return
-
-                console.log('err', err)
-
+                if (retryCount >= 3) return
                 if (err.status === 404) return
-
                 setTimeout(() => revalidate({ retryCount }), 5000)
             },
         }
@@ -45,7 +42,7 @@ export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
             category: dataItem.category,
             brand: dataItem.brand,
             priceSale: dataItem.price,
-            // inventoryType: dataItem.quantity > 0 ? 'in stock' : 'out of stock',
+            inventoryType: dataItem.variants ? 'in stock' : 'out of stock',
             images: dataItem.images,
             code: dataItem.id,
             description: dataItem.description,
@@ -53,7 +50,7 @@ export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
             price: dataItem.price,
             coverUrl: dataItem.images ? dataItem.images[0] : '',
             createdAt: dataItem.created_at,
-            updateAt: dataItem.update_at,
+            updateAt: dataItem.updated_at,
         })
     )
 
@@ -65,7 +62,7 @@ export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
             productsValidating: isValidating,
             productsEmpty: !false && !products?.length,
         }),
-        [error, isLoading, isValidating, products]
+        [error, isLoading, isValidating, response] // eslint-disable-line
     )
 
     return memoizedValue
@@ -101,11 +98,12 @@ export function useGetProduct(productId: string) {
                   category: data.category,
                   brand: data.brand,
                   description: data.description,
+                  brandId: data.brandId,
+                  categoryId: data.categoryId,
                   inventoryType: 'in stock',
                   salePrice: data.salePrice,
                   createdAt: data.created_at,
-                  created_at: data.created_at,
-                  update_at: data.updated_at,
+                  updatedAt: data.update_at,
                   content: data.content || '',
                   variants: data.variants || [],
               }
@@ -124,11 +122,10 @@ export async function updateProduct(id: string, data: any) {
         name: data.name,
         images: data.images.map((image: any) => image),
         gender: data.gender,
-        price: `${data.price}`,
-        salePrice: `${data.priceSale}`,
-        status: data.publish,
+        price: data.price,
+        salePrice: data.salePrice,
+        status: data.status,
         colors: data.colors[0],
-        quantity: `${data.quantity}`,
         brandId: data.brand.brandId || '',
         categoryId: data.category.categoryId || '',
         description: data.description,
@@ -153,18 +150,19 @@ export async function updateProduct(id: string, data: any) {
     }
 }
 
-export async function createProduct(data: any) {
+export async function createProduct(
+    data: Omit<IProductItem, 'id, createdAt, updatedAt, variants'>
+) {
     const payload = JSON.stringify({
         name: data.name,
-        images: data.images,
+        images: data.images ? data.images : [],
         gender: data.gender[0],
-        price: `${data.price}`,
-        salePrice: `${data.priceSale}`,
+        price: data.price,
+        salePrice: data.salePrice,
         status: data.status,
-        colors: data.colors[0],
-        quantity: `${data.quantity}`,
-        brandId: data.brand,
-        categoryId: data.category,
+        brandId: data.brandId,
+        categoryId: data.categoryId,
+        content: data.content,
         description: data.description,
     })
 

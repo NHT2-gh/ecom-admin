@@ -91,13 +91,6 @@ export default function ProductVariantTable({ variants, productId }: Props) {
         (attribute: IAttribute) => attribute.type === 'size'
     )
 
-    // const initialRows = variants?.map((variant) => ({
-    //     id: variant.id,
-    //     color: variant.color?.id || '',
-    //     size: variant.size?.id || '',
-    //     quantity: variant.quantity || 0,
-    // }))
-
     const [rows, setRows] = React.useState<GridRowsProp>([])
     const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
         {}
@@ -113,7 +106,6 @@ export default function ProductVariantTable({ variants, productId }: Props) {
         if (initialRows.length !== 0) {
             setRows(initialRows)
         }
-        console.log('initialRows', initialRows)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

@@ -104,8 +104,14 @@ export default function ProductTableRow({
 
                 <TableCell>
                     <ListItemText
-                        primary={format(new Date(createdAt), 'dd MMM yyyy')}
-                        secondary={format(new Date(createdAt), 'p')}
+                        primary={
+                            createdAt
+                                ? format(new Date(createdAt), 'dd MMM yyyy')
+                                : ''
+                        }
+                        secondary={
+                            createdAt ? format(new Date(createdAt), 'p') : ''
+                        }
                         primaryTypographyProps={{
                             typography: 'body2',
                             noWrap: true,
@@ -178,6 +184,7 @@ export default function ProductTableRow({
                 <MenuItem
                     onClick={() => {
                         onEditRow()
+
                         popover.onClose()
                     }}
                 >

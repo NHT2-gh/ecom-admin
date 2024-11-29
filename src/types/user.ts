@@ -17,6 +17,7 @@ export type IUserItem = {
     firstName?: string
     lastName?: string
     password: string
+    phoneNumber?: string
     name: string
     role: string
     email: string

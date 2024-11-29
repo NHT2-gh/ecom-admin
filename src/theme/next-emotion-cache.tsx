@@ -65,7 +65,7 @@ export default function NextAppDirEmotionCacheProvider(
         }[] = []
 
         inserted.forEach(({ name, isGlobal }) => {
-            const style = registry.cache.inserted[name]
+            const style = registry.cache.inserted[name] as string
 
             if (typeof style !== 'boolean') {
                 if (isGlobal) {

@@ -1,25 +1,25 @@
 // ----------------------------------------------------------------------
-
-import { BaseStatus } from './other'
-
 export type IProductItem = {
     id: string
     name: string
     price: number
-    salePrice: number | null
+    salePrice?: number | null
     gender: string
-    coverUrl: string
-    images: Array<string | File>
-    category: ICategories
-    brand: IBrand
+    coverUrl?: string
+    images: File[]
+    category?: ICategories
+    brand?: IBrand
+    brandId: string
+    categoryId: string
     description: string
     content: string | null
-    inventoryType: string
+    inventoryType?: string
     variants: IProductItemVariant[]
-    status: BaseStatus
+    status: string
     createdAt: string
-    created_at: string
-    update_at: string
+    updatedAt: string
+    created_at?: string
+    updated_at?: string
 }
 
 export type IProductItemVariant = {

@@ -150,13 +150,6 @@ export default function ProductListView() {
         })
     }
 
-    // const handleEditRow = useCallback(
-    //     (id: string) => {
-    //         router.push(paths.dashboard.product.edit(id))
-    //     },
-    //     [router]
-    // )
-
     const handleEditRow = useCallback(
         (id: string) => {
             router.push(paths.dashboard.product.edit(id))
@@ -405,7 +398,9 @@ function applyFilter({
 
     if (stock.length) {
         inputData = inputData.filter((product) =>
-            stock.includes(product.inventoryType)
+            stock.includes(
+                product.inventoryType ? product.inventoryType.toLowerCase() : ''
+            )
         )
     }
 
