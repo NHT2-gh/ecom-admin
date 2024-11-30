@@ -11,7 +11,6 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Grid from '@mui/material/Unstable_Grid2'
 import TextField from '@mui/material/TextField'
-import { GridRowsProp } from '@mui/x-data-grid'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -28,17 +27,20 @@ import { useGetBrands } from 'src/api/brand'
 import { useGetCategorys } from 'src/api/category'
 import { PRODUCT_GENDER_OPTIONS } from 'src/_mock'
 import { createProduct, updateProduct } from 'src/api/product'
-import { createProductVariants } from 'src/api/product-variants'
+import {
+    updateProductVariant,
+    createProductVariants,
+} from 'src/api/product-variants'
 
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, {
     RHFEditor,
     RHFUpload,
     RHFTextField,
-    RHFMultiCheckbox,
+    RHFSingleRadio,
 } from 'src/components/hook-form'
 
-import { IProductItem } from 'src/types/product'
+import { IProductItem, IProductVariantDTO } from 'src/types/product'
 
 import ProductVariantTable from './product-variant-table'
 
@@ -76,8 +78,10 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
         description: Yup.string().required('Description is required'),
         brandId: Yup.string().required('Brand is required'),
         status: Yup.string().required('Status is required'),
+        gender: Yup.string().required('Gender is required'),
+
+        // not required
         salePrice: Yup.number().moreThan(0, 'Sale price should not be $0.00'),
-        gender: Yup.array().required('Gender is required'),
     })
 
     const defaultValues = useMemo(
@@ -89,10 +93,9 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             price: currentProduct?.price || 0,
             status: currentProduct?.status || 'active',
             salePrice: currentProduct?.salePrice || 0,
-            gender: currentProduct?.gender || [],
+            gender: currentProduct?.gender || '',
             categoryId: currentProduct?.category?.id || '',
             brandId: currentProduct?.brand?.id || '',
-            variants: currentProduct?.variants || [],
         }),
         [currentProduct]
     )
@@ -114,7 +117,9 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
 
     const values = watch()
 
-    const [variants, setVariants] = useState<GridRowsProp[]>([])
+    const [variants, setVariants] = useState<IProductVariantDTO[]>(
+        currentProduct?.variants || []
+    )
 
     useEffect(() => {
         if (currentProduct) {
@@ -125,10 +130,24 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
     const onSubmit = handleSubmit(async (data) => {
         try {
             if (currentProduct) {
-                const productId = await updateProduct(currentProduct.id, data)
+                await updateProduct(currentProduct.id, data)
+
                 if (variants.length > 0) {
-                    // TODO: update variants await updateProductVariants(productId, variants)
-                    console.log('variants', variants)
+                    const updateVariantPromises = variants.map((variant) => {
+                        const formattedVariant = {
+                            id: variant.id,
+                            colorId: variant.colorId,
+                            sizeId: variant.sizeId,
+                            quantity: variant.quantity,
+                        }
+
+                        return updateProductVariant(
+                            variant.id,
+                            formattedVariant
+                        )
+                    })
+
+                    await Promise.all(updateVariantPromises)
                 }
             } else {
                 const productId = await createProduct({
@@ -139,9 +158,9 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                 if (variants.length > 0) {
                     const formattedVariants = variants.map((variant) => ({
                         name: 'Variant default',
-                        color: (variant as any).color,
-                        size: (variant as any).size,
-                        quantity: (variant as any).quantity,
+                        color: variant.colorId,
+                        size: variant.sizeId,
+                        quantity: variant.quantity,
                     }))
                     // TODO: await createProductVariants(productId, variants)
                     await createProductVariants(
@@ -357,10 +376,9 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
 
                         <Stack spacing={1}>
                             <Typography variant="subtitle2">Gender</Typography>
-                            <RHFMultiCheckbox
-                                row
+                            <RHFSingleRadio
                                 name="gender"
-                                spacing={2}
+                                row
                                 options={PRODUCT_GENDER_OPTIONS}
                             />
                         </Stack>
@@ -383,7 +401,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                                 onVariantsChange={(newVariants) =>
                                     setVariants(newVariants)
                                 }
-                                variants={currentProduct?.variants || []}
+                                currentVariants={currentProduct?.variants || []}
                             />
                         </Stack>
                     </Stack>

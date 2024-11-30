@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import { useMemo } from 'react'
 
-import axios, { fetcher, endpoints } from 'src/utils/axios'
+import axiosInstance, { fetcher, endpoints } from 'src/utils/axios'
 
 import { IProductItem } from 'src/types/product'
 
@@ -10,7 +10,6 @@ interface GetProductsProps {
     page: number
     rowsPerPage: number
 }
-const accessToken = sessionStorage.getItem('accessToken')
 
 export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
     const url = endpoints.product.list
@@ -92,7 +91,6 @@ export function useGetProduct(productId: string) {
                   price: data.price,
                   gender: data.gender,
                   status: data.status,
-                  coverUrl: data.images ? data.images[0] : '',
                   images: data.images || [],
                   category: data.category,
                   brand: data.brand,
@@ -117,35 +115,46 @@ export function useGetProduct(productId: string) {
 }
 
 export async function updateProduct(id: string, data: any) {
-    const payload = JSON.stringify({
+    const validGenders = ['male', 'female', 'unisex']
+
+    const gender = Array.isArray(data.gender)
+        ? validGenders.find((value) => data.gender.includes(value)) || 'unisex'
+        : 'unisex'
+
+    const payload = {
         name: data.name,
-        images: data.images.map((image: any) => image),
-        gender: data.gender,
+        images: data.images.map((image: any) =>
+            typeof image === 'string' ? image : image.url
+        ),
+        gender,
         price: data.price,
         salePrice: data.salePrice,
         status: data.status,
-        colors: data.colors[0],
-        brandId: data.brand.brandId || '',
-        categoryId: data.category.categoryId || '',
+        colors: data.colors || [],
+        brandId: data.brandId,
+        categoryId: data.categoryId,
         description: data.description,
-    })
-
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
     }
+
     try {
-        const res = await axios.patch(
+        const response = await axiosInstance.patch(
             `${endpoints.product.details}${id}`,
-            payload,
-            { headers }
+            payload
         )
-        if (res?.data.error) {
-            throw new Error(`Error: ${res.data.error}`)
+
+        if (response.status !== 200) {
+            throw new Error(
+                `Failed to update product. Status code: ${response.status}`
+            )
         }
-        return res.data
-    } catch (error) {
-        throw new Error(`Exception: ${error}`)
+        return response.data
+    } catch (error: any) {
+        console.error('Error updating product:', error)
+        throw new Error(
+            `Exception occurred while updating product: ${
+                error.response?.data?.message || error.message
+            }`
+        )
     }
 }
 
@@ -155,7 +164,7 @@ export async function createProduct(
     const payload = JSON.stringify({
         name: data.name,
         images: data.images ? data.images : [],
-        gender: data.gender[0],
+        gender: data.gender,
         price: data.price,
         salePrice: data.salePrice,
         status: data.status,
@@ -166,12 +175,16 @@ export async function createProduct(
     })
     const headers = {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        // Authorization: `Bearer ${accessToken}`,
     }
     try {
-        const res = await axios.post(endpoints.product.create, payload, {
-            headers,
-        })
+        const res = await axiosInstance.post(
+            endpoints.product.create,
+            payload,
+            {
+                headers,
+            }
+        )
         if (res?.data.error) {
             throw new Error(`Error: ${res.data.error}`)
         }
@@ -184,10 +197,10 @@ export async function createProduct(
 export async function deleteProduct(productId: string) {
     try {
         const headers = {
-            Authorization: `Bearer ${accessToken}`,
+            // Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         }
-        const res = await axios.delete(
+        const res = await axiosInstance.delete(
             `${endpoints.product.details}${productId}`,
             { headers }
         )
@@ -202,11 +215,11 @@ export async function deleteProduct(productId: string) {
 export async function deleteProducts(productIds: string[]) {
     try {
         const headers = {
-            Authorization: `Bearer ${accessToken}`,
+            // Authorization: `Bearer ${accessToken}`,
             Accept: '*/*',
         }
         await productIds.map(async (id) => {
-            const res = await axios.delete(
+            const res = await axiosInstance.delete(
                 `${endpoints.product.details}${id}`,
                 { headers }
             )

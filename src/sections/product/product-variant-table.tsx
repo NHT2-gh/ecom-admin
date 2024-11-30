@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react'
 
 import Box from '@mui/material/Box'
@@ -22,7 +24,11 @@ import { useGetAttributes } from 'src/api/attributes'
 
 import Iconify from 'src/components/iconify'
 
-import { IAttribute } from 'src/types/product'
+import {
+    IAttribute,
+    IProductItemVariant,
+    IProductVariantDTO,
+} from 'src/types/product'
 
 declare module '@mui/x-data-grid' {
     interface ToolbarPropsOverrides {
@@ -42,8 +48,9 @@ function EditToolbar(props: GridSlotProps['toolbar']) {
             ...oldRows,
             {
                 id,
-                color: '',
-                size: '',
+                variantId: '',
+                colorId: '',
+                sizeId: '',
                 quantity: '',
                 isNew: true,
             },
@@ -78,13 +85,13 @@ function EditToolbar(props: GridSlotProps['toolbar']) {
 }
 
 interface Props {
-    variants: GridRowsProp
-    onVariantsChange: (variants: GridRowsProp) => void
+    currentVariants: IProductItemVariant[]
+    onVariantsChange: (variants: IProductVariantDTO[]) => void
 }
 
 export default function ProductVariantTable({
-    variants,
     onVariantsChange,
+    currentVariants,
 }: Props) {
     const { attributes } = useGetAttributes()
     const colors = attributes.filter(
@@ -94,28 +101,28 @@ export default function ProductVariantTable({
         (attribute: IAttribute) => attribute.type === 'size'
     )
 
+    const variants = currentVariants || []
+
     const [rows, setRows] = React.useState<GridRowsProp>([])
     const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
         {}
     )
 
     React.useEffect(() => {
-        const initialRows = variants?.map((variant) => ({
+        const initialRows = currentVariants?.map((variant) => ({
             id: variant.id,
-            color: variant.color?.id || '',
-            size: variant.size?.id || '',
+            variantId: variant.id,
+            colorId: variant.color?.id || '',
+            sizeId: variant.size?.id || '',
             quantity: variant.quantity || 0,
         }))
-        if (initialRows.length !== 0) {
-            setRows(initialRows)
-        }
-
-        onVariantsChange(rows)
+        setRows(initialRows)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [rows, onVariantsChange])
+    }, [variants])
 
     const handleGetData = () => {
         alert(JSON.stringify(rows, null, 2))
+        onVariantsChange(rows as IProductVariantDTO[])
     }
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (
@@ -171,10 +178,10 @@ export default function ProductVariantTable({
 
     const columns: GridColDef[] = [
         {
-            field: 'color',
+            field: 'colorId',
             headerName: 'Color',
             type: 'singleSelect',
-            width: 180,
+            flex: 1,
             editable: true,
             valueOptions: colors.map(
                 (color: { id: string; displayName: string }) => ({
@@ -220,9 +227,9 @@ export default function ProductVariantTable({
         },
 
         {
-            field: 'size',
+            field: 'sizeId',
             headerName: 'Size',
-            width: 170,
+            flex: 1,
             editable: true,
             type: 'singleSelect',
             valueOptions: sizes.map(
@@ -266,6 +273,7 @@ export default function ProductVariantTable({
         {
             field: 'quantity',
             headerName: 'Quantity',
+            flex: 1,
             type: 'number',
             align: 'left',
             headerAlign: 'left',
@@ -275,6 +283,7 @@ export default function ProductVariantTable({
         {
             field: 'actions',
             type: 'actions',
+            flex: 1,
             headerName: 'Actions',
             width: 170,
             cellClassName: 'actions',

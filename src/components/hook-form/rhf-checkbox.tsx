@@ -1,8 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form'
 
-import Checkbox from '@mui/material/Checkbox'
-import FormGroup from '@mui/material/FormGroup'
-import FormLabel from '@mui/material/FormLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import FormControlLabel, {
@@ -12,64 +11,23 @@ import FormControlLabel, {
 
 // ----------------------------------------------------------------------
 
-interface RHFCheckboxProps extends Omit<FormControlLabelProps, 'control'> {
-    name: string
-    helperText?: React.ReactNode
-}
-
-export function RHFCheckbox({ name, helperText, ...other }: RHFCheckboxProps) {
-    const { control } = useFormContext()
-
-    return (
-        <Controller
-            name={name}
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-                <div>
-                    <FormControlLabel
-                        control={<Checkbox {...field} checked={field.value} />}
-                        {...other}
-                    />
-
-                    {(!!error || helperText) && (
-                        <FormHelperText error={!!error}>
-                            {error ? error?.message : helperText}
-                        </FormHelperText>
-                    )}
-                </div>
-            )}
-        />
-    )
-}
-
-// ----------------------------------------------------------------------
-
-interface RHFMultiCheckboxProps
+interface RHFSingleRadioProps
     extends Omit<FormControlLabelProps, 'control' | 'label'> {
     name: string
     options: { label: string; value: string }[]
     row?: boolean
-    label?: string
-    spacing?: number
     helperText?: React.ReactNode
 }
 
-export function RHFMultiCheckbox({
+export function RHFSingleRadio({
     row,
     name,
-    label,
     options,
-    spacing,
     helperText,
     sx,
     ...other
-}: RHFMultiCheckboxProps) {
+}: RHFSingleRadioProps) {
     const { control } = useFormContext()
-
-    const getSelected = (selectedItems: string[], item: string) =>
-        selectedItems.includes(item)
-            ? selectedItems.filter((value) => value !== item)
-            : [...selectedItems, item]
 
     return (
         <Controller
@@ -77,30 +35,15 @@ export function RHFMultiCheckbox({
             control={control}
             render={({ field, fieldState: { error } }) => (
                 <FormControl component="fieldset">
-                    {label && (
-                        <FormLabel
-                            component="legend"
-                            sx={{ typography: 'body2' }}
-                        >
-                            {label}
-                        </FormLabel>
-                    )}
-
-                    <FormGroup
+                    <RadioGroup
+                        row={row}
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(e) => field.onChange(e.target.value)}
                         sx={{
-                            ...(row && {
-                                flexDirection: 'row',
-                            }),
                             [`& .${formControlLabelClasses.root}`]: {
-                                '&:not(:last-of-type)': {
-                                    mb: spacing || 0,
-                                },
-                                ...(row && {
-                                    mr: 0,
-                                    '&:not(:last-of-type)': {
-                                        mr: spacing || 2,
-                                    },
-                                }),
+                                mb: row ? 0 : 1,
+                                mr: row ? 2 : 0,
                             },
                             ...sx,
                         }}
@@ -108,26 +51,13 @@ export function RHFMultiCheckbox({
                         {options.map((option) => (
                             <FormControlLabel
                                 key={option.value}
-                                control={
-                                    <Checkbox
-                                        checked={field.value.includes(
-                                            option.value
-                                        )}
-                                        onChange={() =>
-                                            field.onChange(
-                                                getSelected(
-                                                    field.value,
-                                                    option.value
-                                                )
-                                            )
-                                        }
-                                    />
-                                }
+                                control={<Radio />}
                                 label={option.label}
+                                value={option.value}
                                 {...other}
                             />
                         ))}
-                    </FormGroup>
+                    </RadioGroup>
 
                     {(!!error || helperText) && (
                         <FormHelperText error={!!error} sx={{ mx: 0 }}>

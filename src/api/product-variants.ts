@@ -34,3 +34,33 @@ export const createProductVariants = async (
         throw error
     }
 }
+
+export async function updateProductVariant(id: string, data: any) {
+    const payload = {
+        name: data.name,
+        colorId: data.colorId,
+        sizeId: data.sizeId,
+        quantity: data.quantity,
+    }
+
+    try {
+        const url = `${endpoints.product.productVariants}/${id}`
+
+        const response = await axiosInstance.patch(url, payload)
+
+        if (response.status !== 200) {
+            throw new Error(
+                `Failed to update product variant. Status code: ${response.status}`
+            )
+        }
+
+        return response.data
+    } catch (error: any) {
+        console.error('Error updating product variant:', error)
+        throw new Error(
+            `Exception occurred while updating product variant: ${
+                error.response?.data?.message || error.message
+            }`
+        )
+    }
+}

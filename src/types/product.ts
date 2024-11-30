@@ -4,8 +4,7 @@ export type IProductItem = {
     name: string
     price: number
     salePrice?: number | null
-    gender: string[]
-    coverUrl?: string
+    gender: string
     images: string[]
     category?: ICategories
     brand?: IBrand
@@ -34,6 +33,14 @@ export type IProductItemVariant = {
     color: IAttribute
     size: IAttribute
     isNew?: boolean
+}
+
+export type IProductVariantDTO = {
+    id: string
+    name: string
+    colorId: string
+    sizeId: string
+    quantity: number
 }
 
 export type IAttribute = {
