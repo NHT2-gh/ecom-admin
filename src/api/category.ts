@@ -116,7 +116,6 @@ export async function updateCategory({
         if (res?.data.error) {
             throw new Error(`Error: ${res.data.error}`)
         }
-        console.log('res', res.data)
         return res.data
     } catch (error) {
         throw new Error(`Exception: ${error}`)

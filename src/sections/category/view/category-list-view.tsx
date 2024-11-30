@@ -96,8 +96,6 @@ export default function CategoryListView() {
         }
     }, [categorys])
 
-    console.log(categorys)
-
     const dataFiltered = applyFilter({
         inputData: tableData,
         comparator: getComparator(table.order, table.orderBy),
@@ -134,7 +132,7 @@ export default function CategoryListView() {
             await deleteCategory(id)
             enqueueSnackbar('Delete success!')
         } catch (e) {
-            console.log(e)
+            console.error(e)
         }
     }
 

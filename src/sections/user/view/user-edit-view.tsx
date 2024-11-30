@@ -22,8 +22,6 @@ export default function UserEditView({ id }: Props) {
 
     const { user, error } = useGetUser(id)
 
-    console.log(user)
-
     if (user?.id === undefined) {
         return <div>Loading...</div>
     }

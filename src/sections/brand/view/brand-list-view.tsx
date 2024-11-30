@@ -92,7 +92,6 @@ export default function BrandListView() {
             setTableData(brands)
         }
     }, [brands])
-    console.log(brands)
 
     const dataFiltered = applyFilter({
         inputData: tableData,
@@ -130,7 +129,7 @@ export default function BrandListView() {
             await deleteBrand(id)
             enqueueSnackbar('Delete success!')
         } catch (e) {
-            console.log(e)
+            console.error(e)
         }
     }
 

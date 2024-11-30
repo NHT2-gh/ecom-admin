@@ -6,6 +6,17 @@ import { HOST_API } from 'src/config-global'
 
 const axiosInstance = axios.create({ baseURL: HOST_API })
 
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const accessToken = sessionStorage.getItem('accessToken')
+        if (accessToken) {
+            config.headers.Authorization = `Bearer ${accessToken}`
+        }
+        return config
+    },
+    (error) => Promise.reject(error)
+)
+
 axiosInstance.interceptors.response.use(
     (res) => res,
     (error) =>
@@ -39,6 +50,7 @@ export const endpoints = {
         create: `${VERSION_PREFIX}/products`,
         list: `${VERSION_PREFIX}/products`,
         details: `${VERSION_PREFIX}/products/`,
+        productVariants: `${VERSION_PREFIX}/product-variants`,
         search: '',
     },
     image: {

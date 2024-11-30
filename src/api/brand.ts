@@ -95,13 +95,11 @@ export async function updateBrand({
 }: {
     data: Omit<IBrandItem, 'status' | 'createdAt' | 'updatedAt'>
 }) {
-    console.log('data', data)
     const payload = JSON.stringify({
         id: data.id,
         name: data?.name,
         image: data?.image,
     })
-    console.log('payload', payload)
 
     const headers = {
         'Content-Type': 'application/json',
@@ -118,7 +116,6 @@ export async function updateBrand({
         if (res?.data.error) {
             throw new Error(`Error: ${res.data.error}`)
         }
-        console.log('res', res.data)
         return res.data
     } catch (error) {
         throw new Error(`Exception: ${error}`)
@@ -166,8 +163,6 @@ export function useGetBrand(id: string) {
 
 export async function deleteBrand(id: string) {
     const url = endpoints.brand.delete
-
-    // console.log('token', ACCESS_TOKEN)
 
     const headers = {
         'Content-Type': 'application/json',

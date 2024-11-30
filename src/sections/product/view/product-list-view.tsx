@@ -131,7 +131,7 @@ export default function ProductListView() {
             table.onUpdatePageDeleteRow(dataInPage.length)
             await deleteProduct(id)
         } catch (e) {
-            console.log(e)
+            console.error(e)
         }
     }
 

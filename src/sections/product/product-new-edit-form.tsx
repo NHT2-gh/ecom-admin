@@ -11,10 +11,10 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Grid from '@mui/material/Unstable_Grid2'
 import TextField from '@mui/material/TextField'
+import { GridRowsProp } from '@mui/x-data-grid'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
-import { GridRowsProp, GridValidRowModel } from '@mui/x-data-grid'
 import InputAdornment from '@mui/material/InputAdornment'
 import FormControlLabel from '@mui/material/FormControlLabel'
 
@@ -28,6 +28,7 @@ import { useGetBrands } from 'src/api/brand'
 import { useGetCategorys } from 'src/api/category'
 import { PRODUCT_GENDER_OPTIONS } from 'src/_mock'
 import { createProduct, updateProduct } from 'src/api/product'
+import { createProductVariants } from 'src/api/product-variants'
 
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, {
@@ -126,18 +127,27 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             if (currentProduct) {
                 const productId = await updateProduct(currentProduct.id, data)
                 if (variants.length > 0) {
-                    // await createProductVariants(productId, variants)
+                    // TODO: update variants await updateProductVariants(productId, variants)
                     console.log('variants', variants)
                 }
             } else {
-                console.log('data', data)
                 const productId = await createProduct({
                     ...data,
                     images: data.images || [],
                 })
+
                 if (variants.length > 0) {
-                    // await createProductVariants(productId, variants)
-                    console.log('variants', variants)
+                    const formattedVariants = variants.map((variant) => ({
+                        name: 'Variant default',
+                        color: (variant as any).color,
+                        size: (variant as any).size,
+                        quantity: (variant as any).quantity,
+                    }))
+                    // TODO: await createProductVariants(productId, variants)
+                    await createProductVariants(
+                        productId.data,
+                        formattedVariants
+                    )
                 }
             }
 

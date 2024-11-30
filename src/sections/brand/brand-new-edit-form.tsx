@@ -110,7 +110,6 @@ export default function BrandNewEditForm({ currentBrand }: Props) {
                         image: 'https://cdn.freebiesupply.com/logos/thumbs/2x/suunto-2-logo.png',
                     },
                 }
-                console.log('payload', payload)
                 await createBrand(payload)
             }
             reset()

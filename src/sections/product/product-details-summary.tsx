@@ -58,8 +58,6 @@ export default function ProductDetailsSummary({ product, ...other }: Props) {
         }
     }, [defaultValues, product, reset])
 
-    console.log('product', product)
-
     const renderPrice = (
         <Box sx={{ typography: 'h5' }}>
             {salePrice && (

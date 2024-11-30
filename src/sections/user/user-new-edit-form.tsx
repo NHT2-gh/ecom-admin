@@ -103,7 +103,6 @@ export default function UserNewEditForm({ currentUser }: Props) {
             if (currentUser) {
                 if (data.avatarUrl !== currentUser.avatar) {
                     const resUploadImg = await uploadImage(data.avatarUrl)
-                    console.log(resUploadImg)
                     if (resUploadImg != null) {
                         await updateUser(currentUser?.id, data, resUploadImg)
                     }

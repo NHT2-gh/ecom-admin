@@ -92,7 +92,6 @@ export default function OrderListView() {
         page: table.page,
         rowsPerPage: table.rowsPerPage,
     })
-    console.log(orders)
 
     useEffect(() => {
         if (orders.length) {

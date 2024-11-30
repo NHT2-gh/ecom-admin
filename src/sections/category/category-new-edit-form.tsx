@@ -79,7 +79,6 @@ export default function CategoryNewEditForm({ currentCategory }: Props) {
             } else {
                 const payload = { data: { name, description } }
                 await createCategory(payload)
-                console.log('payload', payload)
             }
             reset()
             enqueueSnackbar(

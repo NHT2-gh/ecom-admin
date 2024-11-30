@@ -127,7 +127,6 @@ export async function updateUser(id: string, data: any, avatarUrl?: string) {
         if (res?.data.error) {
             throw new Error(`Error: ${res.data.error}`)
         }
-        console.log('res', res.data)
         return res.data
     } catch (error) {
         throw new Error(`Exception: ${error}`)
@@ -195,7 +194,6 @@ export async function deleteUser(id: string) {
             throw new Error(`Error: ${res.data.error}`)
         }
         return res.data
-        console.log('res', res.data)
     } catch (error) {
         throw new Error(`Exception: ${error}`)
     }

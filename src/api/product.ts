@@ -3,8 +3,7 @@ import { useMemo } from 'react'
 
 import axios, { fetcher, endpoints } from 'src/utils/axios'
 
-import { IProductItem, IProductItemVariant } from 'src/types/product'
-import { de } from 'date-fns/locale'
+import { IProductItem } from 'src/types/product'
 
 // ----------------------------------------------------------------------
 interface GetProductsProps {
