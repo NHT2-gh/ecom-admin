@@ -4,9 +4,9 @@ export type IProductItem = {
     name: string
     price: number
     salePrice?: number | null
-    gender: string
+    gender: string[]
     coverUrl?: string
-    images: File[]
+    images: string[]
     category?: ICategories
     brand?: IBrand
     brandId: string

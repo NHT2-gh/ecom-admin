@@ -78,11 +78,14 @@ function EditToolbar(props: GridSlotProps['toolbar']) {
 }
 
 interface Props {
-    productId?: string
     variants: GridRowsProp
+    onVariantsChange: (variants: GridRowsProp) => void
 }
 
-export default function ProductVariantTable({ variants, productId }: Props) {
+export default function ProductVariantTable({
+    variants,
+    onVariantsChange,
+}: Props) {
     const { attributes } = useGetAttributes()
     const colors = attributes.filter(
         (attribute: IAttribute) => attribute.type === 'color'
@@ -106,8 +109,10 @@ export default function ProductVariantTable({ variants, productId }: Props) {
         if (initialRows.length !== 0) {
             setRows(initialRows)
         }
+
+        onVariantsChange(rows)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [rows, onVariantsChange])
 
     const handleGetData = () => {
         alert(JSON.stringify(rows, null, 2))

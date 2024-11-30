@@ -1,7 +1,7 @@
 import * as Yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useMemo, useEffect, useCallback } from 'react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -14,6 +14,7 @@ import TextField from '@mui/material/TextField'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
+import { GridRowsProp, GridValidRowModel } from '@mui/x-data-grid'
 import InputAdornment from '@mui/material/InputAdornment'
 import FormControlLabel from '@mui/material/FormControlLabel'
 
@@ -36,7 +37,6 @@ import FormProvider, {
     RHFMultiCheckbox,
 } from 'src/components/hook-form'
 
-import { BaseStatus } from 'src/types/other'
 import { IProductItem } from 'src/types/product'
 
 import ProductVariantTable from './product-variant-table'
@@ -68,13 +68,15 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
         name: Yup.string().required('Name is required'),
         images: Yup.array(),
         categoryId: Yup.string().required('Category is required'),
-        price: Yup.number().moreThan(0, 'Price should not be $0.00'),
+        price: Yup.number()
+            .moreThan(0, 'Price should not be $0.00')
+            .required('Price is required'),
         content: Yup.string().required('Content is required'),
         description: Yup.string().required('Description is required'),
         brandId: Yup.string().required('Brand is required'),
-        // inventoryType: Yup.string(),
-        status: Yup.string(),
-        salePrice: Yup.number(),
+        status: Yup.string().required('Status is required'),
+        salePrice: Yup.number().moreThan(0, 'Sale price should not be $0.00'),
+        gender: Yup.array().required('Gender is required'),
     })
 
     const defaultValues = useMemo(
@@ -86,11 +88,10 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
             price: currentProduct?.price || 0,
             status: currentProduct?.status || 'active',
             salePrice: currentProduct?.salePrice || 0,
-            gender: currentProduct?.gender || '',
+            gender: currentProduct?.gender || [],
             categoryId: currentProduct?.category?.id || '',
             brandId: currentProduct?.brand?.id || '',
             variants: currentProduct?.variants || [],
-            // inventoryType: Yup.string(),
         }),
         [currentProduct]
     )
@@ -112,6 +113,8 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
 
     const values = watch()
 
+    const [variants, setVariants] = useState<GridRowsProp[]>([])
+
     useEffect(() => {
         if (currentProduct) {
             reset(defaultValues)
@@ -121,10 +124,21 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
     const onSubmit = handleSubmit(async (data) => {
         try {
             if (currentProduct) {
-                await updateProduct(currentProduct.id, data)
+                const productId = await updateProduct(currentProduct.id, data)
+                if (variants.length > 0) {
+                    // await createProductVariants(productId, variants)
+                    console.log('variants', variants)
+                }
             } else {
                 console.log('data', data)
-                await createProduct(data)
+                const productId = await createProduct({
+                    ...data,
+                    images: data.images || [],
+                })
+                if (variants.length > 0) {
+                    // await createProductVariants(productId, variants)
+                    console.log('variants', variants)
+                }
             }
 
             reset()
@@ -356,6 +370,9 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                             </Stack>
 
                             <ProductVariantTable
+                                onVariantsChange={(newVariants) =>
+                                    setVariants(newVariants)
+                                }
                                 variants={currentProduct?.variants || []}
                             />
                         </Stack>

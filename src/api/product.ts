@@ -151,7 +151,7 @@ export async function updateProduct(id: string, data: any) {
 }
 
 export async function createProduct(
-    data: Omit<IProductItem, 'id, createdAt, updatedAt, variants'>
+    data: Omit<IProductItem, 'id' | 'createdAt' | 'updatedAt' | 'variants'>
 ) {
     const payload = JSON.stringify({
         name: data.name,
@@ -165,8 +165,6 @@ export async function createProduct(
         content: data.content,
         description: data.description,
     })
-
-    console.log('payload', payload)
     const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
@@ -178,8 +176,6 @@ export async function createProduct(
         if (res?.data.error) {
             throw new Error(`Error: ${res.data.error}`)
         }
-
-        console.log(res.data)
         return res.data
     } catch (error) {
         throw new Error(`Exception: ${error}`)
