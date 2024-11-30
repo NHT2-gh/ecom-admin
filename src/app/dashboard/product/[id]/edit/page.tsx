@@ -20,14 +20,6 @@ export default function ProductEditPage({ params }: Props) {
 }
 
 export async function generateStaticParams() {
-    console.info(
-        _productList.map((product) => ({
-            params: {
-                id: product.id,
-            },
-        }))
-    )
-
     return _productList.map((product) => ({
         id: product.id,
     }))

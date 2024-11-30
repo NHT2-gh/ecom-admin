@@ -19,6 +19,7 @@ export type IProductItem = {
     updatedAt: string
     created_at?: string
     updated_at?: string
+    coverUrl?: string
 }
 
 export type IProductItemVariant = {

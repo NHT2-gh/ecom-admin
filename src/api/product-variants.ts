@@ -15,7 +15,7 @@ export const createProductVariants = async (
         const promises = variants.map((variant) => {
             const payload = {
                 productId,
-                name: `${variant.color} - ${variant.size}`,
+                name: variant.name,
                 colorId: variant.color,
                 sizeId: variant.size,
                 quantity: variant.quantity,

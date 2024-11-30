@@ -22,6 +22,8 @@ import { useRouter } from 'src/routes/hooks'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
+import { checkUUID } from 'src/utils/check-uuid'
+
 import { uploadImage } from 'src/api/image'
 import { useGetBrands } from 'src/api/brand'
 import { useGetCategorys } from 'src/api/category'
@@ -141,6 +143,19 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                             quantity: variant.quantity,
                         }
 
+                        if (!checkUUID(variant.id)) {
+                            const formatVariant = {
+                                name: `${variant.colorId} - ${variant.sizeId}`,
+                                color: variant.colorId,
+                                size: variant.sizeId,
+                                quantity: variant.quantity,
+                            }
+
+                            return createProductVariants(currentProduct.id, [
+                                formatVariant,
+                            ])
+                        }
+
                         return updateProductVariant(
                             variant.id,
                             formattedVariant
@@ -157,7 +172,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
 
                 if (variants.length > 0) {
                     const formattedVariants = variants.map((variant) => ({
-                        name: 'Variant default',
+                        name: `${variant.colorId} - ${variant.sizeId}`,
                         color: variant.colorId,
                         size: variant.sizeId,
                         quantity: variant.quantity,

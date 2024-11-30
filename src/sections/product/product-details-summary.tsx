@@ -1,26 +1,16 @@
-import { useEffect, useMemo } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
+import { useMemo, useEffect } from 'react'
 
 import Box from '@mui/material/Box'
-import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
-import Rating from '@mui/material/Rating'
-import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-import { formHelperTextClasses } from '@mui/material/FormHelperText'
 
 import { fCurrency } from 'src/utils/format-number'
 
-import Label from 'src/components/label'
-import Iconify from 'src/components/iconify'
-import { ColorPicker } from 'src/components/color-utils'
-import FormProvider, { RHFSelect } from 'src/components/hook-form'
+import FormProvider from 'src/components/hook-form'
 
 import { IProductItem } from 'src/types/product'
-
-import IncrementerButton from './common/incrementer-button'
 
 // ----------------------------------------------------------------------
 
