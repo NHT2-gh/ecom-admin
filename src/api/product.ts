@@ -40,7 +40,11 @@ export function useGetProducts({ page, rowsPerPage }: GetProductsProps) {
             category: dataItem.category,
             brand: dataItem.brand,
             priceSale: dataItem.price,
-            inventoryType: dataItem.variants ? 'in stock' : 'out of stock',
+            inventoryType: dataItem.variants?.some(
+                (variant) => variant.quantity > 0
+            )
+                ? 'in stock'
+                : 'out of stock',
             images: dataItem.images,
             code: dataItem.id,
             description: dataItem.description,

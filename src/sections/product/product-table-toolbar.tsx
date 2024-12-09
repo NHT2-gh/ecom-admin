@@ -38,7 +38,6 @@ type Props = {
 export default function ProductTableToolbar({
     filters,
     onFilters,
-    //
     stockOptions,
     publishOptions,
 }: Props) {

@@ -4,8 +4,6 @@ import { useTheme } from '@mui/material/styles'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 
-import { _ecommerceSalesOverview } from 'src/_mock'
-
 import { useSettingsContext } from 'src/components/settings'
 
 import EcommerceYearlySales from '../ecommerce-yearly-sales'
@@ -142,10 +140,7 @@ export default function OverviewEcommerceView() {
                 </Grid>
 
                 <Grid xs={12} md={6} lg={8}>
-                    <EcommerceSalesOverview
-                        title="Sales Overview"
-                        data={_ecommerceSalesOverview}
-                    />
+                    <EcommerceSalesOverview title="Sales Overview" data={[]} />
                 </Grid>
 
                 <Grid xs={12} md={6} lg={4}>

@@ -84,7 +84,6 @@ export function useGetCategorys({ page, rowsPerPage }: GetCategorysProps) {
         }),
         [response, isLoading, error, isValidating] // eslint-disable-line
     )
-
     return memoizedValue
 }
 

@@ -22,7 +22,7 @@ type Props = {
     filters: IUserTableFilters
     onFilters: (name: string, value: IUserTableFilterValue) => void
     //
-    roleOptions: string[]
+    roleOptions: { value: string; label: string }[]
 }
 
 export default function UserTableToolbar({
@@ -89,13 +89,15 @@ export default function UserTableToolbar({
                         }}
                     >
                         {roleOptions.map((option) => (
-                            <MenuItem key={option} value={option}>
+                            <MenuItem key={option.value} value={option.value}>
                                 <Checkbox
                                     disableRipple
                                     size="small"
-                                    checked={filters.role.includes(option)}
+                                    checked={filters.role.includes(
+                                        option.label
+                                    )}
                                 />
-                                {option}
+                                {option.label}
                             </MenuItem>
                         ))}
                     </Select>

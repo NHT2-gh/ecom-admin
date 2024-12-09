@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useEffect, useState, useLayoutEffect } from 'react'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -26,9 +27,11 @@ import Iconify from 'src/components/iconify'
 
 import {
     IAttribute,
-    IProductItemVariant,
     IProductVariantDTO,
+    IProductItemVariant,
 } from 'src/types/product'
+
+import AddAttributeDialog from './product-new-attribute-dialog'
 
 declare module '@mui/x-data-grid' {
     interface ToolbarPropsOverrides {
@@ -55,10 +58,10 @@ function EditToolbar(props: GridSlotProps['toolbar']) {
                 isNew: true,
             },
         ])
-        setRowModesModel((oldModel) => ({
-            ...oldModel,
-            [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-        }))
+        // setRowModesModel((oldModel) => ({
+        //     ...oldModel,
+        //     [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
+        // }))
     }
 
     return (
@@ -93,22 +96,16 @@ export default function ProductVariantTable({
     onVariantsChange,
     currentVariants,
 }: Props) {
-    const { attributes } = useGetAttributes()
-    const colors = attributes.filter(
-        (attribute: IAttribute) => attribute.type === 'color'
-    )
-    const sizes = attributes.filter(
-        (attribute: IAttribute) => attribute.type === 'size'
-    )
-
-    const variants = currentVariants || []
-
+    const { colors, sizes } = useGetAttributes({ page: 1, itemsPerPage: 100 })
+    const [colorOptions, setColorOptions] = useState<IAttribute[]>(colors)
+    const [sizeOptions, setSizeOptions] = useState<IAttribute[]>(sizes)
     const [rows, setRows] = React.useState<GridRowsProp>([])
+    const [isEditMode, setIsEditMode] = React.useState(false)
     const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
         {}
     )
 
-    React.useEffect(() => {
+    useEffect(() => {
         const initialRows = currentVariants?.map((variant) => ({
             id: variant.id,
             variantId: variant.id,
@@ -116,9 +113,13 @@ export default function ProductVariantTable({
             sizeId: variant.size?.id || '',
             quantity: variant.quantity || 0,
         }))
-        setRows(initialRows)
+
+        if (colors.length > 0 && sizes.length > 0 && !isEditMode) {
+            setRows(initialRows)
+            setIsEditMode(true)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [variants])
+    }, [currentVariants, colors, sizes]) // Dependency array
 
     const handleGetData = () => {
         alert(JSON.stringify(rows, null, 2))
@@ -176,6 +177,41 @@ export default function ProductVariantTable({
         setRowModesModel(newRowModesModel)
     }
 
+    const [openDialogNewColor, setOpenDialogNewColor] = useState(false)
+    const [openDialogNewSize, setOpenDialogNewSize] = useState(false)
+
+    const [dialogType, setDialogType] = useState<'color' | 'size'>('color')
+
+    const handleOpenDialogColor = (type: 'color' | 'size') => {
+        setDialogType(type)
+        setOpenDialogNewColor(true)
+    }
+
+    const handleCloseDialogColor = () => {
+        setOpenDialogNewColor(false)
+    }
+
+    const handleOpenDialogSize = (type: 'color' | 'size') => {
+        setDialogType(type)
+        setOpenDialogNewColor(true)
+    }
+
+    const handleCloseDialogSize = () => {
+        setOpenDialogNewSize(false)
+    }
+
+    const handleAddAttribute = (newAttribute: IAttribute) => {
+        handleCloseDialogColor()
+        handleCloseDialogSize()
+        // Add new attribute to options based on type
+        if (newAttribute.type === 'color') {
+            setColorOptions((prev) => [...prev, newAttribute])
+        }
+        if (newAttribute.type === 'size') {
+            setSizeOptions((prev) => [...prev, newAttribute])
+        }
+    }
+
     const columns: GridColDef[] = [
         {
             field: 'colorId',
@@ -183,7 +219,7 @@ export default function ProductVariantTable({
             type: 'singleSelect',
             flex: 1,
             editable: true,
-            valueOptions: colors.map(
+            valueOptions: colors?.map(
                 (color: { id: string; displayName: string }) => ({
                     value: color.id,
                     label: color.displayName,
@@ -209,30 +245,54 @@ export default function ProductVariantTable({
                 }
 
                 return (
-                    <Select
-                        value={currentValue}
-                        onChange={handleChange}
-                        fullWidth
-                    >
-                        {colors.map(
-                            (color: { id: string; displayName: string }) => (
-                                <MenuItem key={color.id} value={color.id}>
-                                    {color.displayName}
-                                </MenuItem>
-                            )
+                    <>
+                        <Select
+                            value={currentValue}
+                            onChange={handleChange}
+                            fullWidth
+                        >
+                            {colorOptions.map(
+                                (color: {
+                                    id: string
+                                    displayName: string
+                                }) => (
+                                    <MenuItem key={color.id} value={color.id}>
+                                        {color.displayName}
+                                    </MenuItem>
+                                )
+                            )}
+                            <MenuItem
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 4,
+                                    backgroundColor: 'rgb(222, 244, 230)',
+                                }}
+                                onClick={() => handleOpenDialogColor('color')}
+                            >
+                                <Iconify icon="eva:plus-fill" /> Add Color
+                            </MenuItem>
+                        </Select>
+
+                        {openDialogNewColor && (
+                            <AddAttributeDialog
+                                type={dialogType}
+                                open={openDialogNewColor}
+                                onClose={handleCloseDialogColor}
+                                onAddAttribute={handleAddAttribute}
+                            />
                         )}
-                    </Select>
+                    </>
                 )
             },
         },
-
         {
             field: 'sizeId',
             headerName: 'Size',
             flex: 1,
             editable: true,
             type: 'singleSelect',
-            valueOptions: sizes.map(
+            valueOptions: sizes?.map(
                 (size: { id: string; displayName: string }) => ({
                     value: size.id,
                     label: size.displayName,
@@ -259,12 +319,31 @@ export default function ProductVariantTable({
                         onChange={handleChange}
                         fullWidth
                     >
-                        {sizes.map(
+                        {sizeOptions.map(
                             (size: { id: string; displayName: string }) => (
                                 <MenuItem key={size.id} value={size.id}>
                                     {size.displayName}
                                 </MenuItem>
                             )
+                        )}
+                        <MenuItem
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                backgroundColor: 'rgb(222, 244, 230)',
+                            }}
+                            onClick={() => handleOpenDialogSize('size')}
+                        >
+                            <Iconify icon="eva:plus-fill" /> Add Size
+                        </MenuItem>
+                        {openDialogNewSize && (
+                            <AddAttributeDialog
+                                type={dialogType}
+                                open={openDialogNewColor}
+                                onClose={handleCloseDialogSize}
+                                onAddAttribute={handleAddAttribute}
+                            />
                         )}
                     </Select>
                 )
@@ -290,8 +369,12 @@ export default function ProductVariantTable({
             getActions: ({ id }) => {
                 const isInEditMode =
                     rowModesModel[id]?.mode === GridRowModes.Edit
-
                 if (isInEditMode) {
+                    if (colorOptions.length === 0 || sizeOptions.length === 0) {
+                        setColorOptions(colors)
+                        setSizeOptions(sizes)
+                    }
+
                     return [
                         <GridActionsCellItem
                             icon={

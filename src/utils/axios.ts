@@ -51,6 +51,7 @@ export const endpoints = {
         list: `${VERSION_PREFIX}/products`,
         details: `${VERSION_PREFIX}/products/`,
         productVariants: `${VERSION_PREFIX}/product-variants`,
+        productAttributes: `${VERSION_PREFIX}/product-attributes`,
         search: '',
     },
     image: {

@@ -76,14 +76,14 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
         price: Yup.number()
             .moreThan(0, 'Price should not be $0.00')
             .required('Price is required'),
-        content: Yup.string().required('Content is required'),
+        content: Yup.string(),
         description: Yup.string().required('Description is required'),
         brandId: Yup.string().required('Brand is required'),
         status: Yup.string().required('Status is required'),
         gender: Yup.string().required('Gender is required'),
 
         // not required
-        salePrice: Yup.number().moreThan(0, 'Sale price should not be $0.00'),
+        salePrice: Yup.number().moreThan(-1, 'Sale price should not be $0.00'),
     })
 
     const defaultValues = useMemo(
@@ -109,7 +109,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
 
     const {
         reset,
-        setError,
+        // setError,
         watch,
         setValue,
         handleSubmit,
@@ -168,11 +168,12 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
                 const productId = await createProduct({
                     ...data,
                     images: data.images || [],
+                    content: data.content || null,
                 })
 
                 if (variants.length > 0) {
                     const formattedVariants = variants.map((variant) => ({
-                        name: `${variant.colorId} - ${variant.sizeId}`,
+                        name: `${variant.colorId}/${variant.sizeId}`,
                         color: variant.colorId,
                         size: variant.sizeId,
                         quantity: variant.quantity,

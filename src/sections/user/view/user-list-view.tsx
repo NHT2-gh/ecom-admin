@@ -22,7 +22,7 @@ import { RouterLink } from 'src/routes/components'
 import { useBoolean } from 'src/hooks/use-boolean'
 
 import { deleteUser, useGetUsers } from 'src/api/user'
-import { _roles, USER_STATUS_OPTIONS } from 'src/_mock'
+import { USER_ROLE_OPTION, USER_STATUS_OPTIONS } from 'src/_mock'
 
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'
@@ -247,7 +247,7 @@ export default function UserListView() {
                     <UserTableToolbar
                         filters={filters}
                         onFilters={handleFilters}
-                        roleOptions={_roles}
+                        roleOptions={USER_ROLE_OPTION}
                     />
 
                     {canReset && (

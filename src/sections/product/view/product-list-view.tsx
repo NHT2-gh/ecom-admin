@@ -198,7 +198,6 @@ export default function ProductListView() {
                     <ProductTableToolbar
                         filters={filters}
                         onFilters={handleFilters}
-                        //
                         stockOptions={PRODUCT_STOCK_OPTIONS}
                         publishOptions={PUBLISH_OPTIONS}
                     />
